@@ -1,0 +1,1908 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ffffff">
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rapport intervention</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 18px; line-height: 1.25; }
+    h1 { font-size: 18px; margin: 0 0 6px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; align-items: flex-end; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; margin: 10px 0; background:#fff; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    button { padding: 9px 12px; border-radius: 10px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
+    button.active { border-color: #000; }
+    button.primary { border-color: #000; font-weight: 600; }
+    label { display: flex; gap: 8px; align-items: center; margin: 6px 0; cursor: pointer; }
+    textarea { width: 100%; min-height: 190px; border-radius: 10px; border: 1px solid #ddd; padding: 10px; }
+    input[type="text"] { padding: 8px; border-radius: 10px; border: 1px solid #ddd; }
+    select { padding: 8px; border-radius: 10px; border: 1px solid #ddd; }
+    .muted { color: #666; font-size: 12px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .small { font-size: 13px; }
+
+    .tri-list { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .tri-item {
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      padding:10px 10px; border:1px solid #e5e5e5; border-radius: 10px;
+      cursor:pointer; user-select:none;
+    }
+    .tri-left { display:flex; align-items:flex-start; gap:10px; min-width: 0; padding-top:2px; }
+    .tri-badge {
+      width: 28px; height: 28px; display:flex; align-items:center; justify-content:center;
+      border-radius: 9px; border:1px solid #ddd; font-weight: 700; flex: 0 0 auto;
+      margin-top: 2px;
+    }
+    .tri-textwrap { min-width:0; }
+    .tri-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .tri-hint { margin-top:4px; font-size:12px; color:#666; }
+    .tri-right { display:flex; align-items:flex-start; gap:8px; flex-wrap: wrap; }
+    .tri-item.neutral .tri-badge { opacity: .5; }
+    .tri-item.done { border-color: #bfe6c7; }
+    .tri-item.done .tri-badge { border-color:#bfe6c7; }
+    .tri-item.notdone { border-color: #f0b7b7; }
+    .tri-item.notdone .tri-badge { border-color:#f0b7b7; }
+    .tri-reason { display:none; }
+    .tri-item.notdone .tri-reason { display:block; }
+
+    /* Bloc exceptions (listes) */
+    .tri-exwrap {
+      display: none;
+      width: 740px;
+      max-width: 70vw;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-top: 6px;
+    }
+    .tri-exhead { display:flex; justify-content:space-between; gap:10px; align-items:center; }
+    .tri-exrow { display:flex; gap:6px; align-items:center; margin-top:8px; }
+    .tri-exrow input[type="text"] { flex:1; min-width: 240px; }
+    .tri-exrow button { padding: 6px 10px; border-radius: 10px; }
+
+    /* Dérangements arrivée */
+    .arr-drgt-box { margin-top: 10px; border: 1px dashed #ddd; border-radius: 10px; padding: 10px; }
+    .arr-drgt-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .arr-drgt-row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top: 10px; }
+    .arr-drgt-input { flex: 1 1 260px; min-width: 220px; }
+    .arr-drgt-btn { padding: 8px 10px; border-radius: 10px; border: 1px solid #ccc; background:#fff; cursor:pointer; }
+    .arr-drgt-pill { display:inline-flex; gap:8px; align-items:center; border:1px solid #ddd; border-radius: 999px; padding:6px 10px; cursor:pointer; user-select:none; }
+    .arr-drgt-pill.active { border-color:#000; font-weight:700; }
+
+    /* Constat fin */
+    .closure-wrap { margin-top:8px; border:1px dashed #ddd; border-radius:10px; padding:10px; }
+    .closure-box { margin-top:8px; border:1px dashed #ddd; border-radius:10px; padding:10px; }
+
+    /* Dark mode */
+    body.dark { background: #1e1e1e; color: #eaeaea; }
+    body.dark .card { background: #2a2a2a; border-color: #444; }
+    body.dark input, body.dark textarea, body.dark select, body.dark button {
+      background: #333; color: #eaeaea; border-color: #555;
+    }
+    body.dark .muted { color: #aaa; }
+    body.dark button.active { border-color: #fff; }
+    body.dark .tri-item { background:#2a2a2a; border-color:#555; }
+    body.dark .tri-badge { border-color:#666; }
+    body.dark .tri-item.done { border-color:#3a6b46; }
+    body.dark .tri-item.notdone { border-color:#7a3f3f; }
+    body.dark .tri-exwrap { border-color:#555; }
+    body.dark .arr-drgt-box { border-color:#555; }
+    body.dark .arr-drgt-pill { border-color:#666; }
+    body.dark .closure-wrap, body.dark .closure-box { border-color:#555; }
+    body.dark .tri-hint { color:#aaa; }
+  </style>
+</head>
+
+<body>
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+  <h1 id="appTitle" style="margin:0;">Rapport intervention</h1>
+
+  <div style="display:flex; gap:8px;">
+    <button id="feedbackBtn" type="button" class="primary">💡 Proposer</button>
+    <button id="darkToggle" type="button">🌙 Mode sombre</button>
+  </div>
+</div>
+
+
+  <div class="muted">
+    Offline : oui (stocké sur l’appareil). Ouvre dans Chrome/Edge/Safari.
+  </div>
+
+  <!-- Sync OneDrive (fichier lié) -->
+  <div class="card">
+    <h2 style="font-size:15px;margin:0 0 8px;">Synchronisation OneDrive (par employé)</h2>
+
+    <div class="muted" id="syncHint" style="margin-bottom:8px;">
+      Recommandé : sur OneDrive, crée un dossier <b>RapportIntervention</b> et choisis un fichier
+      <b>RapportIntervention_rapports.json</b>. (PC Edge/Chrome recommandé)
+    </div>
+
+    <div class="row">
+      <div style="flex:1; min-width:260px;">
+        <div class="small">Fichier lié</div>
+        <div id="syncFileLabel" class="muted">Aucun fichier lié</div>
+      </div>
+    </div>
+
+    <div class="row" style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
+      <button id="linkSyncBtn" type="button" class="primary">🔗 Lier mon fichier OneDrive</button>
+      <button id="syncLoadBtn" type="button">🔄 Charger</button>
+      <button id="syncSaveBtn" type="button">💾 Sauver maintenant</button>
+      <button id="unlinkSyncBtn" type="button">✖ Dissocier</button>
+    </div>
+
+    <div class="muted" id="syncStatus">—</div>
+  </div>
+
+  <!-- Gestion multi-rapports -->
+  <div class="card">
+    <h2 style="font-size:15px;margin:0 0 8px;">Dossier / Rapport</h2>
+    <div class="row">
+      <div style="min-width:260px">
+        <div class="small">Rapport en cours</div>
+        <select id="reportSelect" style="min-width:260px"></select>
+      </div>
+
+      <div style="min-width:260px; flex:1">
+        <div class="small">Nom du rapport</div>
+        <input id="reportName" type="text" placeholder="Ex: Clinique X" style="width:100%" />
+      </div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
+        <button id="newReportBtn" type="button" class="primary">＋ Nouveau</button>
+        <button id="dupReportBtn" type="button">Dupliquer</button>
+        <button id="deleteReportBtn" type="button">Supprimer</button>
+        <button id="exportBtnTop" type="button">⬇ Export</button>
+        <button id="importBtnTop" type="button">⬆ Import</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation jour -->
+  <div class="card">
+    <h2 style="font-size:15px;margin:0 0 8px;">Jour de travail (dans ce même rapport)</h2>
+    <div class="row">
+      <div style="min-width:220px">
+        <div class="small">Jour actif</div>
+        <select id="daySelect" style="min-width:220px"></select>
+      </div>
+
+      <div style="min-width:220px">
+  <div class="small">Date du jour (dd-mm-yyyy)</div>
+  <input id="dayDate" type="date" style="min-width:220px" />
+</div>
+
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
+        <button id="addDayBtn" type="button" class="primary">＋ Ajouter un jour</button>
+        <button id="deleteDayBtn" type="button">Supprimer ce jour</button>
+      </div>
+    </div>
+    <div class="muted" id="dayLabel"></div>
+  </div>
+
+  <!-- Tabs + Constat arrivée -->
+  <div class="card">
+    <div class="tabs">
+      <button id="tab-rev" class="active" type="button">Révision annuelle (AR)</button>
+      <button id="tab-det" type="button">Changement détecteurs (MR)</button>
+      <button id="tab-dep" type="button">Dépannage</button>
+    </div>
+
+    <div class="card" style="margin-top:10px;">
+      <h2 style="font-size:15px;margin:0 0 8px;">Constat à l’arrivée</h2>
+      <div id="arrivalBlocks"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2 style="font-size:15px;margin:0 0 8px;">Liste des contrôles / actions (clic = — → ✓ → ✕ → —)</h2>
+      <div class="muted" style="margin-bottom:8px;">
+        ✓ = effectué • ✕ = non réalisé + raison • — = n’apparaît pas dans le rapport
+      </div>
+      <div id="actionsList" class="tri-list"></div>
+    </div>
+  </div>
+
+  <!-- Constat fin -->
+  <div id="departureCard" class="card" style="display:block;">
+    <h2 id="closureTitle" style="font-size:15px;margin:0 0 8px;">Constat de fin d’intervention</h2>
+    <div id="departureBlocks"></div>
+  </div>
+
+  <!-- Rapport final -->
+  <div class="card">
+    <div class="row" style="justify-content: space-between; align-items: center;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="primary" id="copyBtn" type="button">📋 Copier le rapport</button>
+        <button id="resetBtn" type="button">Réinitialiser (ce rapport)</button>
+      </div>
+      <div id="status" class="muted"></div>
+    </div>
+    <textarea id="preview"></textarea>
+  </div>
+
+<script>
+/***********************
+ * VERSION (UI uniquement)
+ ***********************/
+const APP_VERSION = "2.3.0-onedrive";
+function renderAppTitle() {
+  const h = document.getElementById("appTitle");
+  if (h) h.textContent = `Rapport intervention — génération rapide (v${APP_VERSION})`;
+}
+
+/***********************
+ * Date (stockée en ISO YYYY-MM-DD, affichée en dd-mm-yyyy)
+ ***********************/
+function pad2(n){ return String(n).padStart(2,"0"); }
+
+function todayISO() {
+  const d = new Date();
+  // ISO local (sans surprise de timezone)
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+
+function formatDMYFromISO(iso) {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+  const [y,m,d] = iso.split("-");
+  return `${d}-${m}-${y}`;
+}
+
+function parseDMYToISO(s) {
+  const v = (s || "").trim();
+  // accepte dd-mm-yyyy ou dd.mm.yyyy
+  const m = v.match(/^(\d{2})[.\-](\d{2})[.\-](\d{4})$/);
+  if (!m) return "";
+  const dd = m[1], mm = m[2], yy = m[3];
+  return `${yy}-${mm}-${dd}`;
+}
+
+function addDaysISO(iso, daysToAdd) {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+  const [y,m,d] = iso.split("-").map(Number);
+  // Date en UTC pour éviter les décalages
+  const dt = new Date(Date.UTC(y, m-1, d));
+  dt.setUTCDate(dt.getUTCDate() + daysToAdd);
+  return `${dt.getUTCFullYear()}-${pad2(dt.getUTCMonth()+1)}-${pad2(dt.getUTCDate())}`;
+}
+
+
+/***********************
+ * LocalStorage
+ ***********************/
+const STORE_VERSION = 3;
+const STORE_INDEX_KEY = "rapport_intervention_index_v3";
+const STORE_ACTIVE_KEY = "rapport_intervention_active_v3";
+
+function uid() { return "r_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8); }
+function safeParseJSON(s) { try { return JSON.parse(s); } catch { return null; } }
+
+function loadIndex() {
+  const raw = localStorage.getItem(STORE_INDEX_KEY);
+  const data = safeParseJSON(raw);
+  if (!data || !Array.isArray(data.reports) || data.v !== STORE_VERSION) return { v: STORE_VERSION, reports: [] };
+  return data;
+}
+function saveIndex(idx) { localStorage.setItem(STORE_INDEX_KEY, JSON.stringify(idx)); }
+function reportKey(id) { return `rapport_intervention_report_${id}_v3`; }
+function loadReport(id) {
+  const raw = localStorage.getItem(reportKey(id));
+  const data = safeParseJSON(raw);
+  return data && data.v === STORE_VERSION ? data : null;
+}
+function saveReport(id, payload) { localStorage.setItem(reportKey(id), JSON.stringify(payload)); }
+function deleteReportStorage(id) { localStorage.removeItem(reportKey(id)); }
+function getActiveReportId() { return localStorage.getItem(STORE_ACTIVE_KEY) || ""; }
+function setActiveReportId(id) { localStorage.setItem(STORE_ACTIVE_KEY, id); }
+
+function status(msg) {
+  const el = document.getElementById("status");
+  if (!el) return;
+  el.textContent = msg;
+  setTimeout(()=> el.textContent="", 1800);
+}
+
+/***********************
+ * OneDrive-friendly sync via "Fichier lié"
+ ***********************/
+const SYNC_SUGGESTED_FILENAME = "RapportIntervention_rapports.json";
+const SYNC_DB = "rapport_intervention_sync_db";
+const SYNC_STORE = "kv";
+const SYNC_KEY_HANDLE = "sync_file_handle_v1";
+
+let syncFileHandle = null;
+let syncAutosaveTimer = null;
+let syncIsBusy = false;
+let lastSyncHash = "";
+let autosaveEnabled = true;
+
+function hasFileSystemAccess() {
+  return !!(window.showOpenFilePicker || window.showSaveFilePicker) && !!window.FileSystemFileHandle;
+}
+function setSyncStatus(msg) {
+  const el = document.getElementById("syncStatus");
+  if (el) el.textContent = msg;
+}
+function setSyncFileLabel(msg) {
+  const el = document.getElementById("syncFileLabel");
+  if (el) el.textContent = msg;
+}
+function quickHash(str) {
+  let h = 2166136261;
+  for (let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return String(h >>> 0);
+}
+// IndexedDB
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(SYNC_DB, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(SYNC_STORE)) db.createObjectStore(SYNC_STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function idbSet(key, value) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SYNC_STORE, "readwrite");
+    tx.objectStore(SYNC_STORE).put(value, key);
+    tx.oncomplete = () => { db.close(); resolve(); };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+  });
+}
+async function idbGet(key) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SYNC_STORE, "readonly");
+    const req = tx.objectStore(SYNC_STORE).get(key);
+    req.onsuccess = () => { db.close(); resolve(req.result); };
+    req.onerror = () => { db.close(); reject(req.error); };
+  });
+}
+async function idbDel(key) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(SYNC_STORE, "readwrite");
+    tx.objectStore(SYNC_STORE).delete(key);
+    tx.oncomplete = () => { db.close(); resolve(); };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+  });
+}
+async function tryRestoreHandleFromIDB() {
+  try { return await idbGet(SYNC_KEY_HANDLE); } catch { return null; }
+}
+async function requestHandlePermission(handle, writable) {
+  try {
+    const opts = { mode: writable ? "readwrite" : "read" };
+    if (handle.queryPermission) {
+      const q = await handle.queryPermission(opts);
+      if (q === "granted") return true;
+    }
+    if (handle.requestPermission) {
+      const r = await handle.requestPermission(opts);
+      return r === "granted";
+    }
+    return true;
+  } catch { return false; }
+}
+async function pickOrCreateSyncFile() {
+  if (!hasFileSystemAccess()) {
+    alert("Ton navigateur ne supporte pas la liaison directe de fichier.\n\nUtilise Export/Import (ou Edge/Chrome sur PC).");
+    return null;
+  }
+  const handle = await window.showSaveFilePicker({
+    suggestedName: SYNC_SUGGESTED_FILENAME,
+    types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
+  });
+  const ok = await requestHandlePermission(handle, true);
+  if (!ok) { alert("Permission refusée pour écrire dans ce fichier."); return null; }
+
+  try {
+    const file = await handle.getFile();
+    if (file.size === 0) {
+      const bundle = buildExportBundle();
+      await writeHandleJSON(handle, bundle);
+    }
+  } catch {}
+  return handle;
+}
+async function writeHandleJSON(handle, obj) {
+  const txt = JSON.stringify(obj, null, 2);
+  const w = await handle.createWritable();
+  await w.write(txt);
+  await w.close();
+}
+async function readHandleJSON(handle) {
+  const file = await handle.getFile();
+  const txt = await file.text();
+  return safeParseJSON(txt);
+}
+function buildExportBundle() {
+  const idx = loadIndex();
+  return {
+    v: STORE_VERSION,
+    exportedAt: Date.now(),
+    reports: idx.reports.map(r => ({
+      id: r.id,
+      name: r.name,
+      data: loadReport(r.id) || defaultPayload()
+    })),
+    active: getActiveReportId()
+  };
+}
+function applyImportBundle(bundle) {
+  if (!bundle || bundle.v !== STORE_VERSION || !Array.isArray(bundle.reports)) {
+    alert("Fichier de synchro invalide.");
+    return false;
+  }
+  const old = loadIndex();
+  old.reports.forEach(r => deleteReportStorage(r.id));
+
+  const idx = { v: STORE_VERSION, reports: [] };
+  bundle.reports.forEach(r => {
+    if (!r.id || !r.name) return;
+    idx.reports.push({ id: r.id, name: r.name });
+    const data = (r.data && r.data.v === STORE_VERSION) ? r.data : defaultPayload();
+    saveReport(r.id, data);
+  });
+
+  if (!idx.reports.length) {
+    ensureAtLeastOneReport();
+  } else {
+    saveIndex(idx);
+    setActiveReportId(bundle.active && idx.reports.some(x=>x.id===bundle.active) ? bundle.active : idx.reports[0].id);
+  }
+
+  loadActiveReportIntoUI();
+  refreshReportSelect();
+  return true;
+}
+async function syncSaveNow(reason="manuel") {
+  if (!syncFileHandle) { setSyncStatus("Aucun fichier lié."); return; }
+  if (syncIsBusy) return;
+  syncIsBusy = true;
+  try {
+    const ok = await requestHandlePermission(syncFileHandle, true);
+    if (!ok) { setSyncStatus("Permission refusée (écriture)."); return; }
+
+    const bundle = buildExportBundle();
+    bundle._meta = { app: "rapport_intervention", appVersion: APP_VERSION, savedAt: Date.now() };
+    lastSyncHash = quickHash(JSON.stringify(bundle));
+
+    await writeHandleJSON(syncFileHandle, bundle);
+    setSyncStatus(`Sauvegardé ✅ (${reason}) — ${new Date().toLocaleString()}`);
+  } catch (e) {
+    console.error(e);
+    setSyncStatus("Erreur sauvegarde ⚠️");
+  } finally {
+    syncIsBusy = false;
+  }
+}
+async function syncLoadNow(reason="manuel") {
+  if (!syncFileHandle) { setSyncStatus("Aucun fichier lié."); return; }
+  if (syncIsBusy) return;
+  syncIsBusy = true;
+  try {
+    const ok = await requestHandlePermission(syncFileHandle, false);
+    if (!ok) { setSyncStatus("Permission refusée (lecture)."); return; }
+
+    const bundle = await readHandleJSON(syncFileHandle);
+    if (!bundle) { setSyncStatus("Fichier vide/invalide ⚠️"); return; }
+
+    const h = quickHash(JSON.stringify(bundle));
+    if (h === lastSyncHash) { setSyncStatus(`Déjà à jour ✅ (${reason})`); return; }
+
+    const okApply = applyImportBundle(bundle);
+    if (okApply) {
+      lastSyncHash = h;
+      setSyncStatus(`Chargé ✅ (${reason}) — ${new Date().toLocaleString()}`);
+      status("Synchro chargée ✅");
+    }
+  } catch (e) {
+    console.error(e);
+    setSyncStatus("Erreur chargement ⚠️");
+  } finally {
+    syncIsBusy = false;
+  }
+}
+function scheduleAutosave() {
+  if (!autosaveEnabled) return;
+  if (!syncFileHandle) return;
+  if (syncAutosaveTimer) clearTimeout(syncAutosaveTimer);
+  syncAutosaveTimer = setTimeout(() => syncSaveNow("auto"), 1200);
+}
+async function initSyncUI() {
+  const hint = document.getElementById("syncHint");
+  if (!hasFileSystemAccess()) {
+    if (hint) hint.innerHTML = `Ton navigateur ne supporte pas la liaison directe de fichier.<br>Utilise <b>Export/Import</b> ou ouvre cette page dans <b>Edge/Chrome (PC)</b>.`;
+  }
+  const restored = await tryRestoreHandleFromIDB();
+  if (restored) {
+    const ok = await requestHandlePermission(restored, true);
+    if (ok) {
+      syncFileHandle = restored;
+      setSyncFileLabel(`Fichier lié ✅ (${SYNC_SUGGESTED_FILENAME})`);
+      setSyncStatus("Prêt à synchroniser.");
+      await syncLoadNow("auto au démarrage");
+      return;
+    }
+  }
+  setSyncFileLabel("Aucun fichier lié");
+  setSyncStatus("—");
+}
+
+/***********************
+ * DATA
+ ***********************/
+const DETECTEUR_MOTIFS = [
+  "Accès impossible",
+  "Introuvable",
+  "Local fermé / accès interdit",
+  "Détecteur bloqué / obstacle",
+  "Hauteur / moyen d’accès insuffisant",
+  "Hors périmètre / hors contrat",
+  "Autre"
+];
+
+const EXCEPTIONS_ITEM = "Changement des détecteurs automatiques";
+const EXCEPTIONS_REPORT_HEADER = "DÉTECTEURS NON REMPLACÉS :";
+const EXCEPTIONS_HELP = "Ici tu listes UNIQUEMENT les détecteurs NON remplacés (le reste est considéré remplacé).";
+
+const DM_EXCEPTIONS_ITEM = "Test de tous les déclencheurs manuels";
+const DM_REPORT_HEADER = "DÉCLENCHEURS MANUELS NON TESTÉS :";
+const DM_HELP = "Ici tu listes UNIQUEMENT les déclencheurs manuels NON testés (le reste est considéré testé).";
+
+const TYPES = {
+  rev: {
+    title: "Révision annuelle de la centrale de détection incendie (ECS) avec contrôle des équipements associés et vérification du système de sécurité incendie",
+    items: [
+      "Coordination avec le personnel sur place",
+      "Information au client : sécurité absente ou affaiblie durant notre présence sur site",
+      "Mise en test du CTA",
+      "Mise en test Certas",
+      "Mise en test de la centrale incendie",
+      "Mise à jour du transmetteur",
+      "Test remontée dérangement transmetteur",
+      "Test des critères feu",
+      "Test des critères Certas",
+      "Test des temps de présence et reconnaissance",
+      "Contrôle de l’historique de la centrale",
+      "Lecture de ligne",
+      "Traitements techniques",
+      "Test de tous les déclencheurs manuels",
+      "Test de un ou plusieurs détecteurs automatiques par ligne",
+      "Test d’un détecteur EX par ligne EX",
+      "Test détecteur linéaire",
+      "Test détecteurs Flamme",
+      "Test câble thermique",
+      "Test sprinkler",
+      "Test dérangement sprinkler",
+      "Test FDA",
+      "Test des asservissements",
+      "Contrôle feu flash",
+      "Contrôle des klaxons",
+      "Test sirène / signalisation",
+      "Contrôle alimentation / batterie",
+      "Mise sur batterie de la centrale pour alarme",
+      "Test dérangement coupure 230V",
+      "Test dérangement coupure batterie",
+      "Contrôle réception alarmes au CTA",
+      "Contrôle réception alarmes Certas",
+      "Remplacement des batteries",
+      "Installation Remote + SPM",
+      "Nettoyage / contrôle visuel de l'installation",
+      "Remise en ordre de la centrale",
+      "Finalisation révision",
+      "Remise en service de la centrale feu",
+      "Remise en traitement normal du CTA",
+      "Remise en traitement normal de Certas"
+    ],
+    defaultDone: [
+      "Remise en service de la centrale feu",
+      "Remise en traitement normal du CTA",
+      "Remise en traitement normal de Certas"
+    ]
+  },
+
+  det: {
+    title: "Maintenance et remplacement périodique des détecteurs sur centrale de détection incendie (ECS). Intervention obligatoire conformément aux exigences légales et aux prescriptions de maintenance : les détecteurs de fumée standards doivent être remplacés tous les 8 ans afin de garantir la performance de détection, la fiabilité du système et le maintien du niveau de sécurité incendie de l’installation.",
+    items: [
+      "Coordination avec le personnel sur place",
+      "Mise en test de la centrale",
+      "Mise en test du CTA",
+      "Mise en test de Certas",
+      "Changement des détecteurs automatiques",
+      "Lecture de ligne",
+      "Traitements techniques",
+      "Finalisation intervention",
+      "Remise en service de la centrale feu",
+      "Remise en traitement normal du CTA",
+      "Remise en traitement normal de Certas"
+    ],
+    defaultDone: [
+      "Remise en service de la centrale feu",
+      "Remise en traitement normal du CTA",
+      "Remise en traitement normal de Certas"
+    ]
+  },
+
+  dep: {
+    title: "DÉPANNAGE",
+    items: [
+      "Coordination avec le personnel sur place",
+      "Information au client concernant l’état de la sécurité incendie durant l’intervention",
+      "Mise en test de la centrale incendie",
+      "Mise en test du CTA",
+      "Mise en test de Certas",
+      "Diagnostic du défaut / analyse de la panne",
+      "Lecture de ligne",
+      "Recherche de panne approfondie",
+      "Contrôle des module / carte électronique",
+      "Contrôle des alimentations 230V",
+      "Contrôle de l’alimentation batterie",
+      "Remplacement des batteries",
+      "Remplacement détecteur défectueux",
+      "Remplacement déclencheur manuel",
+      "Remplacement module / carte électronique",
+      "Contrôle du câblage et des connexions",
+      "Contrôle des étoiles / lignes incendie",
+      "Vérification des résistances de fin de ligne",
+      "Test des détecteurs automatiques",
+      "Test des déclencheurs manuels",
+      "Test des sirènes / klaxons",
+      "Test des asservissements",
+      "Test des transmissions (CTA / Certas)",
+      "Réinitialisation / acquittement des défauts",
+      "Remise en service de la centrale incendie",
+      "Remise en traitement normal du CTA",
+      "Remise en traitement normal de Certas",
+      "Contrôle final du bon fonctionnement",
+      "Nettoyage du poste / remise en ordre",
+      "Finalisation de l’intervention"
+    ],
+    defaultDone: []
+  }
+};
+
+const ARRIVAL = {
+  rev: {
+    state: [
+      "À mon arrivée, la centrale est en service",
+      "À mon arrivée, la centrale présente des zones hors service",
+      "À mon arrivée, la centrale présente des dérangements"
+    ],
+    mode: [
+      "À mon arrivée, la centrale est en mode direct",
+      "À mon arrivée, la centrale est en mode différé"
+    ]
+  },
+  det: {
+    state: [
+      "À mon arrivée, la centrale est en service",
+      "À mon arrivée, la centrale présente des zones hors service",
+      "À mon arrivée, la centrale présente des dérangements"
+    ],
+    mode: [
+      "À mon arrivée, la centrale est en mode direct",
+      "À mon arrivée, la centrale est en mode différé"
+    ]
+  },
+  dep: {
+    state: [
+      "À mon arrivée, la centrale est en service",
+      "À mon arrivée, la centrale présente des zones hors service",
+      "À mon arrivée, la centrale présente des dérangements"
+    ],
+    mode: [
+      "À mon arrivée, la centrale est en mode direct",
+      "À mon arrivée, la centrale est en mode différé"
+    ]
+  }
+};
+
+const REASONS = [
+  "Accès impossible",
+  "Client absent",
+  "Matériel manquant",
+  "Sécurité / autorisation",
+  "Hors contrat",
+  "Report demandé par client"
+];
+
+const REASONS_CUSTOM = {
+  "Mise à jour du transmetteur": [
+    "Accès impossible",
+    "Transmetteur dans centrale effraction",
+    "Transmetteur pas chez Siemens"
+  ],
+  "Remplacement des batteries": [
+    "Accès impossible",
+    "Batterie non disponible",
+    "Commande en attente"
+  ],
+  "Test des temps de présence et reconnaissance": [
+    "Centrale uniquement en mode direct"
+  ],
+  "Test des asservissements": [
+    "Pas souhaité par le client",
+    "Pas possible car locaux occupés et le client ne veut pas déranger le personnel"
+  ]
+};
+
+const DRGT_CATALOG = [
+  "Ligne ouverte",
+  "Court-circuit (C-C)",
+  "Module principal FN2001",
+  "Module / carte électronique",
+  "Défaut alim 230V",
+  "Défaut batterie",
+  "Défaut transmission",
+  "Détecteur en dérangement",
+  "Étoile / Ligne en dérangement"
+];
+
+const CLOSURE = {
+  rev: {
+    titleUI: "Constat de fin d’intervention (AR)",
+    header: "CONSTAT DE FIN D’INTERVENTION :",
+    options: [
+      "La révision annuelle s’est déroulée correctement. Les tests réalisés sur l’installation sont conformes et l’installation est opérationnelle.",
+      "Des défauts ont été constatés sur l’installation. Tous les tests/corrections n’ont pas pu être finalisés."
+    ],
+    reasonsMode: "multi",
+    reasons: [
+      "Accès impossible",
+      "Local fermé / accès interdit",
+      "Matériel manquant / à commander",
+      "Défaut persistant (investigation complémentaire)",
+      "Action client requise",
+      "Travaux hors périmètre / hors contrat",
+      "Autre"
+    ]
+  },
+  det: {
+    titleUI: "Constat de fin d’intervention (MR)",
+    header: "CONSTAT DE FIN D’INTERVENTION :",
+    options: [
+      "L’intervention de remplacement/maintenance des détecteurs s’est déroulée correctement. L’installation est en service et opérationnelle.",
+      "Des défauts ont été constatés sur l’installation. Tous les remplacements/tests n’ont pas pu être finalisés."
+    ],
+    reasonsMode: "multi",
+    reasons: [
+      "Accès impossible",
+      "Détecteur introuvable",
+      "Local fermé / accès interdit",
+      "Hauteur / moyen d’accès insuffisant",
+      "Matériel manquant / à commander",
+      "Action client requise",
+      "Hors périmètre / hors contrat",
+      "Autre"
+    ]
+  },
+  dep: {
+    titleUI: "Constat au départ (dépannage)",
+    header: "CONSTAT AU DÉPART :",
+    options: [
+      "À mon départ, l’installation est opérationnelle. Les dérangements ont été quittancés et le système est en service.",
+      "À mon départ, n’ayant pas pu effectuer toutes les corrections nécessaires, la centrale restera en dérangement."
+    ],
+    reasonsMode: "single",
+    reasons: [
+      "Accès impossible",
+      "Matériel commandé / en attente",
+      "Intervention complémentaire nécessaire",
+      "Action client requise",
+      "Travaux hors périmètre / hors contrat"
+    ]
+  }
+};
+
+/***********************
+ * Helpers DOM
+ ***********************/
+function el(tag, attrs = {}, children = []) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") node.className = v;
+    else if (k === "text") node.textContent = v;
+    else node.setAttribute(k, v);
+  }
+  for (const c of children) node.appendChild(c);
+  return node;
+}
+function isExceptionsItem(txt) { return txt === EXCEPTIONS_ITEM; }
+
+/***********************
+ * State
+ ***********************/
+let currentType = "rev";
+let days = [];
+let currentDayIndex = 0;
+let globalExceptions = { det_exceptions: [], dm_exceptions: [] };
+
+function defaultDay() {
+  return {
+    dateISO: todayISO(),
+    states: { rev: [], det: [], dep: [] },
+    arrivalState: {
+      rev: { state:[true,false,false], mode:0 },
+      det: { state:[true,false,false], mode:0 },
+      dep: { state:[true,false,false], mode:0 }
+    },
+    arrivalDrgts: {
+      rev: { selected:[], custom:[] },
+      det: { selected:[], custom:[] },
+      dep: { selected:[], custom:[] }
+    },
+    closureState: {
+      rev: { status:0, reasons:[], reasonSingle:"", other:"" },
+      det: { status:0, reasons:[], reasonSingle:"", other:"" },
+      dep: { status:0, reasons:[], reasonSingle:"", other:"" }
+    }
+  };
+}
+function getDay() { return days[currentDayIndex]; }
+
+function initDayStatesIfNeeded(type, dayObj) {
+  const cfg = TYPES[type];
+  if (!dayObj.states[type] || dayObj.states[type].length !== cfg.items.length) {
+    dayObj.states[type] = cfg.items.map(() => ({ state: 0, reason: REASONS[0] }));
+    (cfg.defaultDone || []).forEach(lbl => {
+      const i = cfg.items.indexOf(lbl);
+      if (i >= 0) dayObj.states[type][i].state = 1;
+    });
+  }
+}
+
+function normalizeArrivalState(type, lastChangedIdx) {
+  const st = getDay().arrivalState[type].state;
+  if (lastChangedIdx === 0 && st[0]) { st[1] = false; st[2] = false; return; }
+  if ((lastChangedIdx === 1 || lastChangedIdx === 2) && st[lastChangedIdx]) st[0] = false;
+  if (!st[0] && !st[1] && !st[2]) st[0] = true;
+}
+
+/***********************
+ * ✅ Indication "déjà fait" : recherche dans les jours précédents
+ ***********************/
+function findPreviouslyDoneDay(type, itemIndex) {
+  for (let d = 0; d < currentDayIndex; d++) {
+    const day = days[d];
+    initDayStatesIfNeeded(type, day);
+    if (day.states[type][itemIndex]?.state === 1) return d;
+  }
+  return -1;
+}
+
+/***********************
+ * UI: arrival
+ ***********************/
+function renderStateGroup(type) {
+  const wrap = el("div", { style: "border:1px dashed #ddd; border-radius:10px; padding:10px; margin:8px 0;" });
+  wrap.appendChild(el("div", { class: "small", text: "État" }));
+
+  ARRIVAL[type].state.forEach((txt, idx) => {
+    const id = `arr_${type}_state_${idx}`;
+    const input = el("input", { type: "checkbox", id });
+    input.checked = !!getDay().arrivalState[type].state[idx];
+
+    input.addEventListener("change", () => {
+      getDay().arrivalState[type].state[idx] = !!input.checked;
+      normalizeArrivalState(type, idx);
+      render();
+      updatePreview();
+      saveActiveReportFromUI();
+    });
+
+    wrap.appendChild(el("label", { for: id }, [input, el("span", { text: txt })]));
+  });
+
+  return wrap;
+}
+
+function renderRadioGroup(type) {
+  const wrap = el("div", { style: "border:1px dashed #ddd; border-radius:10px; padding:10px; margin:8px 0;" });
+  wrap.appendChild(el("div", { class: "small", text: "Mode" }));
+
+  ARRIVAL[type].mode.forEach((txt, idx) => {
+    const id = `arr_${type}_mode_${idx}`;
+    const input = el("input", { type: "radio", id, name: `arr_${type}_mode` });
+    input.checked = (getDay().arrivalState[type].mode === idx);
+
+    input.addEventListener("change", () => {
+      if (input.checked) getDay().arrivalState[type].mode = idx;
+      updatePreview();
+      saveActiveReportFromUI();
+    });
+
+    wrap.appendChild(el("label", { for: id }, [input, el("span", { text: txt })]));
+  });
+
+  return wrap;
+}
+
+function renderDerangementsBox(type) {
+  const wrap = el("div", { class:"arr-drgt-box" });
+  wrap.appendChild(el("div", { class:"small", text:"Dérangements à l’arrivée (coches + ajout libre)" }));
+
+  const pills = el("div", { class:"arr-drgt-grid" });
+  DRGT_CATALOG.forEach(name => {
+    const pill = el("div", { class:"arr-drgt-pill", text: name });
+    if (getDay().arrivalDrgts[type].selected.includes(name)) pill.classList.add("active");
+
+    pill.addEventListener("click", () => {
+      const arr = getDay().arrivalDrgts[type].selected;
+      const i = arr.indexOf(name);
+      if (i >= 0) arr.splice(i,1); else arr.push(name);
+      render();
+      updatePreview();
+      saveActiveReportFromUI();
+    });
+
+    pills.appendChild(pill);
+  });
+  wrap.appendChild(pills);
+
+  const row = el("div", { class:"arr-drgt-row" });
+  const input = el("input", { type:"text", class:"arr-drgt-input", placeholder:"Ajouter un dérangement (ex: Ligne 3 : défaut X…)" });
+  const addBtn = el("button", { type:"button", class:"arr-drgt-btn", text:"➕ Ajouter" });
+
+  addBtn.addEventListener("click", () => {
+    const v = (input.value || "").trim();
+    if (!v) return;
+    getDay().arrivalDrgts[type].custom.push(v);
+    input.value = "";
+    render();
+    updatePreview();
+    saveActiveReportFromUI();
+  });
+
+  row.appendChild(input);
+  row.appendChild(addBtn);
+  wrap.appendChild(row);
+
+  const customs = getDay().arrivalDrgts[type].custom;
+  if (customs.length) {
+    const list = el("div", { style:"margin-top:10px;" });
+    customs.forEach((line, idx) => {
+      const r = el("div", { class:"arr-drgt-row", style:"margin-top:6px;" });
+      r.appendChild(el("div", { text:`• ${line}`, style:"flex:1;" }));
+      const del = el("button", { type:"button", class:"arr-drgt-btn", text:"🗑️" });
+      del.addEventListener("click", () => {
+        customs.splice(idx,1);
+        render();
+        updatePreview();
+        saveActiveReportFromUI();
+      });
+      r.appendChild(del);
+      list.appendChild(r);
+    });
+    wrap.appendChild(list);
+  }
+
+  return wrap;
+}
+
+/***********************
+ * Exceptions UI (générique)
+ ***********************/
+function buildExceptionsUI(key, helpText) {
+  const wrap = el("div", { class:"tri-exwrap" });
+
+  wrap.appendChild(el("div", { class:"tri-exhead" }, [
+    el("div", { class:"small", text:"Liste (exceptions)" }),
+    el("div", { class:"muted", text: helpText })
+  ]));
+
+  const list = el("div", {});
+  wrap.appendChild(list);
+
+  function renderRows() {
+    list.innerHTML = "";
+    const arr = globalExceptions[key] || [];
+
+    arr.forEach((row, rIdx) => {
+      const line = el("div", { class:"tri-exrow" });
+
+      const inp = el("input", { type:"text", value: row.label || "", placeholder:"Ex: Couloir pharmacie / DM 12" });
+      inp.addEventListener("input", (e) => {
+        globalExceptions[key][rIdx].label = e.target.value;
+        updatePreview(); saveActiveReportFromUI();
+      });
+
+      const sel = el("select", {});
+      DETECTEUR_MOTIFS.forEach(m => sel.appendChild(el("option", { value:m, text:m })));
+      sel.value = row.motif || DETECTEUR_MOTIFS[0];
+      sel.addEventListener("change", (e) => {
+        globalExceptions[key][rIdx].motif = e.target.value;
+        updatePreview(); saveActiveReportFromUI();
+      });
+
+      const del = el("button", { type:"button", text:"✕" });
+      del.addEventListener("click", (e) => {
+        e.stopPropagation();
+        globalExceptions[key].splice(rIdx, 1);
+        renderRows();
+        updatePreview(); saveActiveReportFromUI();
+      });
+
+      line.appendChild(inp);
+      line.appendChild(sel);
+      line.appendChild(del);
+      list.appendChild(line);
+    });
+
+    const add = el("button", { type:"button", text:"+ Ajouter" });
+    add.style.marginTop = "10px";
+    add.addEventListener("click", (e) => {
+      e.stopPropagation();
+      globalExceptions[key].push({ label:"", motif: DETECTEUR_MOTIFS[0] });
+      renderRows();
+      updatePreview(); saveActiveReportFromUI();
+    });
+    list.appendChild(add);
+  }
+
+  renderRows();
+  return wrap;
+}
+
+/***********************
+ * TRI ITEM (avec indication déjà fait)
+ ***********************/
+function renderTriItem(type, idx, text) {
+  const day = getDay();
+  initDayStatesIfNeeded(type, day);
+  const st = day.states[type][idx];
+
+  const item = el("div", { class:"tri-item neutral" });
+  const left = el("div", { class:"tri-left" });
+  const badge = el("div", { class:"tri-badge", text:"—" });
+
+  const textWrap = el("div", { class:"tri-textwrap" });
+  const label = el("div", { class:"tri-text", text });
+
+  let hintEl = null;
+  const prevDay = findPreviouslyDoneDay(type, idx);
+  if (prevDay >= 0) hintEl = el("div", { class:"tri-hint", text:`Déjà fait : Jour ${prevDay+1}` });
+
+  textWrap.appendChild(label);
+  if (hintEl) textWrap.appendChild(hintEl);
+
+  left.appendChild(badge);
+  left.appendChild(textWrap);
+
+  const right = el("div", { class:"tri-right" });
+
+  const sel = el("select", { class:"tri-reason" });
+  const reasonsToUse = (REASONS_CUSTOM && REASONS_CUSTOM[text]) ? REASONS_CUSTOM[text] : REASONS;
+  reasonsToUse.forEach(r => sel.appendChild(el("option", { value: r, text: r })));
+  if (!reasonsToUse.includes(st.reason)) st.reason = reasonsToUse[0];
+  sel.value = st.reason || reasonsToUse[0];
+
+  sel.addEventListener("change", (e) => {
+    st.reason = e.target.value;
+    updatePreview();
+    saveActiveReportFromUI();
+  });
+  right.appendChild(sel);
+
+  let exUI = null;
+
+  // MR : détecteurs non remplacés
+  if (currentType === "det" && isExceptionsItem(text)) {
+    exUI = buildExceptionsUI("det_exceptions", EXCEPTIONS_HELP);
+    right.appendChild(exUI);
+  }
+
+  // AR : déclencheurs manuels non testés
+  if (currentType === "rev" && text === DM_EXCEPTIONS_ITEM) {
+    exUI = buildExceptionsUI("dm_exceptions", DM_HELP);
+    right.appendChild(exUI);
+  }
+
+  item.appendChild(left);
+  item.appendChild(right);
+
+  function applyUI() {
+    item.classList.remove("neutral","done","notdone");
+    if (st.state === 0) { item.classList.add("neutral"); badge.textContent="—"; }
+    else if (st.state === 1) { item.classList.add("done"); badge.textContent="✓"; }
+    else { item.classList.add("notdone"); badge.textContent="✕"; }
+
+    const reasonsNow = (REASONS_CUSTOM && REASONS_CUSTOM[text]) ? REASONS_CUSTOM[text] : REASONS;
+    if (!reasonsNow.includes(st.reason)) st.reason = reasonsNow[0];
+    sel.value = st.reason || reasonsNow[0];
+
+    if (exUI) {
+      const key = (currentType === "det") ? "det_exceptions" : "dm_exceptions";
+      const hasAny = (globalExceptions[key] || []).some(x => (x.label || "").trim());
+      exUI.style.display = (st.state === 1 || st.state === 2 || hasAny) ? "block" : "none";
+    }
+  }
+
+  item.addEventListener("click", (e) => {
+    const tag = e.target && e.target.tagName;
+    if (tag === "SELECT" || tag === "INPUT" || tag === "BUTTON") return;
+    st.state = (st.state + 1) % 3;
+    if (st.state === 2 && !st.reason) st.reason = reasonsToUse[0];
+    applyUI();
+    updatePreview();
+    saveActiveReportFromUI();
+  });
+
+  applyUI();
+  return item;
+}
+
+/***********************
+ * CLOSURE
+ ***********************/
+function renderClosure(type) {
+  const departureBlocksEl = document.getElementById("departureBlocks");
+  departureBlocksEl.innerHTML = "";
+  const cfg = CLOSURE[type];
+  if (!cfg) return;
+
+  document.getElementById("closureTitle").textContent = cfg.titleUI;
+
+  const wrap = el("div", { class:"closure-wrap" });
+
+  cfg.options.forEach((txt, idx) => {
+    const id = `closure_${type}_${idx}`;
+    const input = el("input", { type:"radio", id, name:`closure_${type}_status` });
+    input.checked = (getDay().closureState[type].status === idx);
+
+    input.addEventListener("change", () => {
+      getDay().closureState[type].status = idx;
+      render();
+      updatePreview();
+      saveActiveReportFromUI();
+    });
+
+    wrap.appendChild(el("label", { for:id }, [input, el("span", { text: txt })]));
+  });
+
+  departureBlocksEl.appendChild(wrap);
+
+  if (getDay().closureState[type].status !== 1) return;
+
+  if (cfg.reasonsMode === "single") {
+    const sel = el("select", {});
+    cfg.reasons.forEach(r => sel.appendChild(el("option", { value:r, text:r })));
+
+    if (!cfg.reasons.includes(getDay().closureState[type].reasonSingle)) {
+      getDay().closureState[type].reasonSingle = cfg.reasons[0];
+    }
+    sel.value = getDay().closureState[type].reasonSingle || cfg.reasons[0];
+
+    sel.addEventListener("change", () => {
+      getDay().closureState[type].reasonSingle = sel.value;
+      updatePreview();
+      saveActiveReportFromUI();
+    });
+
+    departureBlocksEl.appendChild(sel);
+    return;
+  }
+
+  const box = el("div", { class:"closure-box" });
+  box.appendChild(el("div", { class:"small", text:"Motifs (multi-sélection) :" }));
+
+  cfg.reasons.forEach(reason => {
+    const key = reason.replace(/\W+/g,"_");
+    const id = `closure_${type}_chk_${key}`;
+    const input = el("input", { type:"checkbox", id });
+    input.checked = (getDay().closureState[type].reasons || []).includes(reason);
+
+    input.addEventListener("change", () => {
+      const arr = getDay().closureState[type].reasons;
+      const i = arr.indexOf(reason);
+      if (input.checked && i < 0) arr.push(reason);
+      if (!input.checked && i >= 0) arr.splice(i,1);
+      updatePreview();
+      saveActiveReportFromUI();
+    });
+
+    box.appendChild(el("label", { for:id }, [input, el("span", { text: reason })]));
+  });
+
+  const other = el("input", { type:"text", placeholder:"Autre (préciser)…", value: getDay().closureState[type].other || "" });
+  other.style.width = "100%";
+  other.style.marginTop = "8px";
+  other.addEventListener("input", () => {
+    getDay().closureState[type].other = other.value || "";
+    updatePreview();
+    saveActiveReportFromUI();
+  });
+
+  box.appendChild(other);
+  departureBlocksEl.appendChild(box);
+}
+
+/***********************
+ * Render + Preview
+ ***********************/
+function updateDaySelect() {
+  const sel = document.getElementById("daySelect");
+  sel.innerHTML = "";
+  days.forEach((d, i) => {
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    const dmy = formatDMYFromISO(d.dateISO || parseDMYToISO(d.date || ""));
+opt.textContent = `Jour ${i+1}${dmy ? " — " + dmy : ""}`;
+    sel.appendChild(opt);
+  });
+  sel.value = String(currentDayIndex);
+}
+
+function setDayLabel() {
+  const d = getDay();
+  const label = document.getElementById("dayLabel");
+  const n = currentDayIndex + 1;
+  const dmy = formatDMYFromISO(d.dateISO || parseDMYToISO(d.date || ""));
+  const dt = dmy ? ` — Date : ${dmy}` : "";
+  label.textContent = `Jour actif : Jour ${n}${dt}`;
+}
+
+function render() {
+  const actionsListEl = document.getElementById("actionsList");
+  const arrivalBlocksEl = document.getElementById("arrivalBlocks");
+
+  updateDaySelect();
+  setDayLabel();
+
+  // on injecte une valeur ISO dans le date picker
+const iso = getDay().dateISO || parseDMYToISO(getDay().date || "") || todayISO();
+getDay().dateISO = iso;
+document.getElementById("dayDate").value = iso;
+
+
+  actionsListEl.innerHTML = "";
+  arrivalBlocksEl.innerHTML = "";
+
+  arrivalBlocksEl.appendChild(renderStateGroup(currentType));
+  if (getDay().arrivalState[currentType].state[2]) arrivalBlocksEl.appendChild(renderDerangementsBox(currentType));
+  arrivalBlocksEl.appendChild(renderRadioGroup(currentType));
+
+  const cfg = TYPES[currentType];
+  initDayStatesIfNeeded(currentType, getDay());
+  cfg.items.forEach((txt, idx) => actionsListEl.appendChild(renderTriItem(currentType, idx, txt)));
+
+  renderClosure(currentType);
+
+  document.getElementById("tab-rev").classList.toggle("active", currentType === "rev");
+  document.getElementById("tab-det").classList.toggle("active", currentType === "det");
+  document.getElementById("tab-dep").classList.toggle("active", currentType === "dep");
+
+  updatePreview();
+}
+
+function dayBlockToLines(type, day, dayNumber) {
+  const cfg = TYPES[type];
+  const lines = [];
+
+const dmy = formatDMYFromISO(day.dateISO || parseDMYToISO(day.date || ""));
+lines.push(`JOUR ${dayNumber}${dmy ? ` — Date : ${dmy}` : ""}`);
+
+
+  ARRIVAL[type].state.forEach((txt, i) => { if (day.arrivalState[type].state[i]) lines.push(txt); });
+  const arrivalMode = ARRIVAL[type].mode[day.arrivalState[type].mode] || "";
+  if (arrivalMode) lines.push(arrivalMode);
+
+  if (day.arrivalState[type].state[2]) {
+    const der = [...day.arrivalDrgts[type].selected, ...day.arrivalDrgts[type].custom]
+      .map(x => (x||"").trim()).filter(Boolean);
+    if (der.length) {
+      lines.push("");
+      lines.push("DÉRANGEMENTS À L’ARRIVÉE :");
+      der.forEach(x => lines.push(`- ${x}`));
+    }
+  }
+
+  lines.push("");
+
+  const done = [];
+  const notDone = [];
+
+  cfg.items.forEach((txt, idx) => {
+    const st = day.states[type][idx];
+    if (st.state === 1) done.push(txt);
+
+    if (st.state === 2) {
+      // On ne met PAS l'item "exceptions" dans la section NON RÉALISÉ (on le liste dans son bloc dédié)
+      const isDetExc = (type === "det" && txt === EXCEPTIONS_ITEM);
+      const isDmExc = (type === "rev" && txt === DM_EXCEPTIONS_ITEM);
+      if (!isDetExc && !isDmExc) {
+        notDone.push(`${txt} — Raison : ${st.reason || REASONS[0]}`);
+      }
+    }
+  });
+
+  lines.push("TRAVAUX EFFECTUÉS :");
+  if (done.length) done.forEach(x => lines.push(`- ${x}`));
+  else lines.push("- (aucun élément sélectionné)");
+  lines.push("");
+
+  if (notDone.length) {
+    lines.push("NON RÉALISÉ :");
+    notDone.forEach(x => lines.push(`- ${x}`));
+    lines.push("");
+  }
+
+  const cl = CLOSURE[type];
+  lines.push(cl.header);
+  lines.push("- " + (cl.options[day.closureState[type].status] || cl.options[0]));
+
+  if (day.closureState[type].status === 1) {
+    if (cl.reasonsMode === "single") {
+      if (day.closureState[type].reasonSingle) lines.push("- Motif : " + day.closureState[type].reasonSingle);
+    } else {
+      const motifs = [...(day.closureState[type].reasons || [])];
+      const other = (day.closureState[type].other || "").trim();
+      if (other) motifs.push("Autre : " + other);
+      if (motifs.length) lines.push("- Motifs : " + motifs.join(", "));
+    }
+  }
+
+  lines.push("");
+  return lines;
+}
+
+function updatePreview() {
+  const previewEl = document.getElementById("preview");
+  const cfg = TYPES[currentType];
+
+  const lines = [];
+  lines.push(cfg.title);
+  lines.push("");
+
+  days.forEach((d, i) => {
+    initDayStatesIfNeeded(currentType, d);
+    lines.push(...dayBlockToLines(currentType, d, i+1));
+  });
+
+  // MR: détecteurs non remplacés (global)
+  if (currentType === "det") {
+    const ex = (globalExceptions.det_exceptions || [])
+      .map(x => ({ label:(x.label||"").trim(), motif: x.motif || DETECTEUR_MOTIFS[0] }))
+      .filter(x => x.label);
+
+    if (ex.length) {
+      lines.push(EXCEPTIONS_REPORT_HEADER);
+      ex.forEach(x => lines.push(`- ${x.label} — Motif : ${x.motif}`));
+      lines.push("");
+    }
+  }
+
+  // AR: déclencheurs manuels non testés (global)
+  if (currentType === "rev") {
+    const ex = (globalExceptions.dm_exceptions || [])
+      .map(x => ({ label:(x.label||"").trim(), motif: x.motif || DETECTEUR_MOTIFS[0] }))
+      .filter(x => x.label);
+
+    if (ex.length) {
+      lines.push(DM_REPORT_HEADER);
+      ex.forEach(x => lines.push(`- ${x.label} — Motif : ${x.motif}`));
+      lines.push("");
+    }
+  }
+
+  previewEl.value = lines.join("\n");
+}
+
+/***********************
+ * Copy
+ ***********************/
+async function copyReport() {
+  updatePreview();
+  saveActiveReportFromUI();
+  try {
+    await navigator.clipboard.writeText(document.getElementById("preview").value);
+    status("Copié ✅");
+  } catch {
+    const p = document.getElementById("preview");
+    p.focus(); p.select();
+    status("Sélectionné (Ctrl+C) ⚠️");
+  }
+}
+
+/***********************
+ * Save / Load
+ ***********************/
+function defaultPayload() {
+  return {
+    v: STORE_VERSION,
+    currentType: "rev",
+    days: [ defaultDay() ],
+    currentDayIndex: 0,
+    globalExceptions: { det_exceptions: [], dm_exceptions: [] },
+    dark: document.body.classList.contains("dark") ? 1 : 0,
+    updatedAt: Date.now()
+  };
+}
+
+function saveActiveReportFromUI() {
+  const id = getActiveReportId();
+  if (!id) return;
+
+  const payload = {
+    v: STORE_VERSION,
+    currentType,
+    days,
+    currentDayIndex,
+    globalExceptions,
+    dark: document.body.classList.contains("dark") ? 1 : 0,
+    updatedAt: Date.now()
+  };
+  saveReport(id, payload);
+
+  scheduleAutosave();
+}
+
+function loadActiveReportIntoUI() {
+  const id = getActiveReportId();
+  const data = id ? loadReport(id) : null;
+  const payload = data || defaultPayload();
+
+  if (payload.dark === 1) document.body.classList.add("dark");
+  else document.body.classList.remove("dark");
+
+  days = Array.isArray(payload.days) && payload.days.length ? payload.days : [defaultDay()];
+  currentDayIndex = Number.isFinite(payload.currentDayIndex) ? payload.currentDayIndex : 0;
+  if (currentDayIndex < 0) currentDayIndex = 0;
+  if (currentDayIndex >= days.length) currentDayIndex = days.length - 1;
+
+  globalExceptions = payload.globalExceptions
+    && Array.isArray(payload.globalExceptions.det_exceptions)
+    && Array.isArray(payload.globalExceptions.dm_exceptions)
+    ? payload.globalExceptions
+    : { det_exceptions: [], dm_exceptions: [] };
+
+  currentType = (payload.currentType && TYPES[payload.currentType]) ? payload.currentType : "rev";
+
+  render();
+  syncDarkBtn();
+}
+
+/***********************
+ * Multi-reports
+ ***********************/
+const DEFAULT_REPORT_NAME = "Nouveau rapport";
+
+function ensureAtLeastOneReport() {
+  const idx = loadIndex();
+  if (idx.reports.length) return;
+
+  const id = uid();
+  idx.reports.push({ id, name: DEFAULT_REPORT_NAME });
+  saveIndex(idx);
+
+  saveReport(id, defaultPayload());
+  setActiveReportId(id);
+}
+
+function refreshReportSelect() {
+  const idx = loadIndex();
+  const sel = document.getElementById("reportSelect");
+  sel.innerHTML = "";
+
+  idx.reports.forEach(r => {
+    const opt = document.createElement("option");
+    opt.value = r.id;
+    opt.textContent = r.name;
+    sel.appendChild(opt);
+  });
+
+  const active = getActiveReportId();
+  if (active) sel.value = active;
+
+  const current = idx.reports.find(r => r.id === sel.value);
+  document.getElementById("reportName").value = current ? current.name : "";
+}
+
+function renameActiveReport(newName) {
+  const name = (newName || "").trim();
+  const idx = loadIndex();
+  const id = getActiveReportId();
+  const r = idx.reports.find(x => x.id === id);
+  if (!r) return;
+
+  r.name = name || DEFAULT_REPORT_NAME;
+  saveIndex(idx);
+  refreshReportSelect();
+  scheduleAutosave();
+}
+
+function createNewReport() {
+  const idx = loadIndex();
+  const id = uid();
+  idx.reports.unshift({ id, name: DEFAULT_REPORT_NAME });
+  saveIndex(idx);
+
+  saveReport(id, defaultPayload());
+  setActiveReportId(id);
+
+  loadActiveReportIntoUI();
+  refreshReportSelect();
+  status("Nouveau rapport créé ✅");
+  scheduleAutosave();
+}
+
+function duplicateActiveReport() {
+  const srcId = getActiveReportId();
+  const src = loadReport(srcId);
+  if (!src) return;
+
+  const idx = loadIndex();
+  const srcMeta = idx.reports.find(r => r.id === srcId);
+  const baseName = (srcMeta && srcMeta.name) ? srcMeta.name : "Rapport";
+
+  const id = uid();
+  const name = `${baseName} (copie)`;
+
+  idx.reports.unshift({ id, name });
+  saveIndex(idx);
+
+  const cloned = JSON.parse(JSON.stringify(src));
+  cloned.updatedAt = Date.now();
+
+  saveReport(id, cloned);
+  setActiveReportId(id);
+
+  loadActiveReportIntoUI();
+  refreshReportSelect();
+  status("Rapport dupliqué ✅");
+  scheduleAutosave();
+}
+
+function resetCurrentReportSilentAndRename() {
+  const id = getActiveReportId();
+  if (!id) return;
+  saveReport(id, defaultPayload());
+
+  const idx = loadIndex();
+  const r = idx.reports.find(x => x.id === id);
+  if (r) r.name = DEFAULT_REPORT_NAME;
+  saveIndex(idx);
+
+  loadActiveReportIntoUI();
+  refreshReportSelect();
+  status("Rapport réinitialisé ✅");
+  scheduleAutosave();
+}
+
+function deleteActiveReport() {
+  const idx = loadIndex();
+  const id = getActiveReportId();
+
+  // ✅ si c'est le seul rapport : on "supprime" = reset + rename
+  if (idx.reports.length <= 1) {
+    const ok = confirm("Il n’y a qu’un seul rapport.\n\nSupprimer = réinitialiser ce rapport (et remettre le nom à 'Nouveau rapport').");
+    if (!ok) return;
+    resetCurrentReportSilentAndRename();
+    return;
+  }
+
+  const meta = idx.reports.find(r => r.id === id);
+  const ok = confirm(`Supprimer définitivement ce rapport ?\n\n${meta ? meta.name : id}`);
+  if (!ok) return;
+
+  idx.reports = idx.reports.filter(r => r.id !== id);
+  saveIndex(idx);
+  deleteReportStorage(id);
+
+  setActiveReportId(idx.reports[0].id);
+  loadActiveReportIntoUI();
+  refreshReportSelect();
+  status("Rapport supprimé ✅");
+  scheduleAutosave();
+}
+
+function exportAllJSON() {
+  const bundle = buildExportBundle();
+  const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "rapport_intervention_backup.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  status("Export OK ✅");
+}
+
+async function importAllJSON() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+  input.onchange = async () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const txt = await file.text();
+    const bundle = safeParseJSON(txt);
+    const ok = applyImportBundle(bundle);
+    if (ok) status("Import OK ✅");
+    scheduleAutosave();
+  };
+  input.click();
+}
+
+function resetCurrentReport() {
+  const ok = confirm("Réinitialiser uniquement CE rapport ? (les autres rapports restent)");
+  if (!ok) return;
+
+  const id = getActiveReportId();
+  if (!id) return;
+
+  saveReport(id, defaultPayload());
+  loadActiveReportIntoUI();
+  refreshReportSelect();
+  status("Rapport réinitialisé ✅");
+  scheduleAutosave();
+}
+
+/***********************
+ * Jour navigation
+ ***********************/
+function addDay() {
+  saveActiveReportFromUI();
+
+  const prev = days[days.length - 1];
+  const prevISO = (prev && (prev.dateISO || parseDMYToISO(prev.date || ""))) || todayISO();
+
+  const nd = defaultDay();
+  nd.dateISO = addDaysISO(prevISO, 1) || todayISO();
+
+  days.push(nd);
+  currentDayIndex = days.length - 1;
+
+  render();
+  saveActiveReportFromUI();
+  status(`Jour ${currentDayIndex+1} ajouté ✅`);
+}
+
+
+function deleteCurrentDay() {
+  if (days.length <= 1) {
+    status("Impossible : il faut au moins 1 jour ⚠️");
+    return;
+  }
+  const ok = confirm(`Supprimer Jour ${currentDayIndex+1} ?`);
+  if (!ok) return;
+
+  days.splice(currentDayIndex, 1);
+  if (currentDayIndex >= days.length) currentDayIndex = days.length - 1;
+  render();
+  saveActiveReportFromUI();
+  status("Jour supprimé ✅");
+}
+
+function switchToDay(idx) {
+  saveActiveReportFromUI();
+  currentDayIndex = idx;
+  render();
+  saveActiveReportFromUI();
+  status(`Jour ${currentDayIndex+1} chargé ✅`);
+}
+
+/***********************
+ * Tabs / Events
+ ***********************/
+function setTab(type) {
+  currentType = type;
+  render();
+  saveActiveReportFromUI();
+}
+
+document.getElementById("tab-rev").addEventListener("click", () => setTab("rev"));
+document.getElementById("tab-det").addEventListener("click", () => setTab("det"));
+document.getElementById("tab-dep").addEventListener("click", () => setTab("dep"));
+
+document.getElementById("copyBtn").addEventListener("click", copyReport);
+document.getElementById("resetBtn").addEventListener("click", resetCurrentReport);
+
+document.getElementById("addDayBtn").addEventListener("click", addDay);
+document.getElementById("deleteDayBtn").addEventListener("click", deleteCurrentDay);
+document.getElementById("daySelect").addEventListener("change", (e) => {
+  const i = parseInt(e.target.value, 10);
+  if (!Number.isFinite(i)) return;
+  switchToDay(i);
+});
+
+// ✅ date par jour (dans la carte "Jour")
+document.getElementById("dayDate").addEventListener("change", (e) => {
+  // e.target.value = ISO (YYYY-MM-DD)
+  getDay().dateISO = e.target.value || "";
+  render(); // rafraîchit la liste + label + rapport en dd-mm-yyyy
+  saveActiveReportFromUI();
+});
+
+
+document.getElementById("newReportBtn").addEventListener("click", createNewReport);
+document.getElementById("dupReportBtn").addEventListener("click", duplicateActiveReport);
+document.getElementById("deleteReportBtn").addEventListener("click", deleteActiveReport);
+document.getElementById("exportBtnTop").addEventListener("click", exportAllJSON);
+document.getElementById("importBtnTop").addEventListener("click", importAllJSON);
+
+document.getElementById("reportSelect").addEventListener("change", (e) => {
+  saveActiveReportFromUI();
+  setActiveReportId(e.target.value);
+  loadActiveReportIntoUI();
+  refreshReportSelect();
+  status("Rapport chargé ✅");
+});
+document.getElementById("reportName").addEventListener("input", (e) => { renameActiveReport(e.target.value); });
+
+/***********************
+ * Sync Buttons
+ ***********************/
+document.getElementById("linkSyncBtn").addEventListener("click", async () => {
+  try {
+    const handle = await pickOrCreateSyncFile();
+    if (!handle) return;
+    syncFileHandle = handle;
+    await idbSet(SYNC_KEY_HANDLE, handle);
+    setSyncFileLabel(`Fichier lié ✅ (${SYNC_SUGGESTED_FILENAME})`);
+    setSyncStatus("Fichier lié. Chargement...");
+    await syncLoadNow("après liaison");
+    await syncSaveNow("init");
+    status("OneDrive lié ✅");
+  } catch (e) {
+    console.error(e);
+    setSyncStatus("Liaison annulée.");
+  }
+});
+
+document.getElementById("syncLoadBtn").addEventListener("click", () => syncLoadNow("manuel"));
+document.getElementById("syncSaveBtn").addEventListener("click", () => syncSaveNow("manuel"));
+
+document.getElementById("unlinkSyncBtn").addEventListener("click", async () => {
+  const ok = confirm("Dissocier le fichier OneDrive pour CET appareil ?\n\n(Ça ne supprime pas le fichier, juste le lien.)");
+  if (!ok) return;
+  syncFileHandle = null;
+  await idbDel(SYNC_KEY_HANDLE);
+  setSyncFileLabel("Aucun fichier lié");
+  setSyncStatus("Dissocié.");
+  status("Dissocié ✅");
+});
+
+/***********************
+ * Dark mode
+ ***********************/
+const darkBtn = document.getElementById("darkToggle");
+function syncDarkBtn() {
+  darkBtn.textContent = document.body.classList.contains("dark") ? "☀ Mode clair" : "🌙 Mode sombre";
+}
+syncDarkBtn();
+darkBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  syncDarkBtn();
+  saveActiveReportFromUI();
+});
+
+/***********************
+ * INIT
+ ***********************/
+renderAppTitle();
+
+ensureAtLeastOneReport();
+if (!getActiveReportId()) {
+  const idx = loadIndex();
+  setActiveReportId(idx.reports[0].id);
+}
+refreshReportSelect();
+
+(async function initLoad() {
+  const id = getActiveReportId();
+  const data = id ? loadReport(id) : null;
+  if (!data) {
+    const payload = defaultPayload();
+    saveReport(id, payload);
+  }
+  loadActiveReportIntoUI();
+  await initSyncUI();
+})();
+
+/***********************
+ * FEEDBACK / AMELIORATION
+ ***********************/
+const FEEDBACK_EMAIL = "thomas.pizzelli@siemens.com"; //
+
+function buildFeedbackText() {
+  const day = getDay();
+  const dayLabel = `Jour ${currentDayIndex + 1}`;
+  const date = (day && day.dateISO) ? formatDMYFromISO(day.dateISO) : "";
+  const typeLabel = currentType === "rev" ? "AR" : currentType === "det" ? "MR" : "Dépannage";
+
+  const app = (typeof APP_VERSION !== "undefined") ? APP_VERSION : "unknown";
+
+return [
+  "Bonjour,",
+  "",
+  "Proposition d’amélioration :",
+  "- ",
+  "",
+  "Contexte automatique :",
+  `- Version app: ${app}`,
+  "",
+  "Merci !",
+  ""
+].join("\n");
+
+}
+
+document.getElementById("feedbackBtn").addEventListener("click", async () => {
+  const subject = encodeURIComponent("Proposition amélioration — Rapport Intervention");
+  const body = encodeURIComponent(buildFeedbackText());
+
+  const mailto = `mailto:${encodeURIComponent(FEEDBACK_EMAIL)}?subject=${subject}&body=${body}`;
+
+  try {
+    window.location.href = mailto;
+  } catch {
+    try {
+      await navigator.clipboard.writeText(buildFeedbackText());
+      alert("Impossible d’ouvrir l’e-mail.\nLe texte a été copié.");
+    } catch {
+      alert("Impossible d’ouvrir l’e-mail.");
+    }
+  }
+});
+
+/***********************
+ * Compteur d’ouvertures (Google)
+ ***********************/
+const COUNTER_URL = "https://script.google.com/macros/s/AKfycbzIMCIF3xuUE_HexMaMzLPUHC7utyUGBYLBJ-2flFgMsedRD5psDcKLUJg4Uw6uzHKt/exec";
+
+function getUserId() {
+  let id = localStorage.getItem("app_user_id");
+  if (!id) {
+    id = "U_" + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem("app_user_id", id);
+  }
+  return id;
+}
+
+function pingCounter() {
+  try {
+    const uid = getUserId();
+
+    // GET (comme ton test manuel) + cache buster
+    const url = COUNTER_URL + "?uid=" + encodeURIComponent(uid) + "&t=" + Date.now();
+
+    // Méthode la plus robuste (pas de CORS)
+    const img = new Image();
+    img.src = url;
+
+  } catch (e) {
+    console.log("Compteur offline");
+  }
+}
+
+window.addEventListener("load", () => {
+  setTimeout(pingCounter, 1200);
+});
+
+
+
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js");
+  }
+</script>
+
+</body>
+</html>
