@@ -1,4 +1,4 @@
-const CACHE_NAME = "rapport-intervention-v2";
+const CACHE_NAME = "rapport-intervention-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -24,4 +24,5 @@ self.addEventListener("fetch", (event) => {
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
 
