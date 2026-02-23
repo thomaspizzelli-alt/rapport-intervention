@@ -1432,7 +1432,7 @@ function renameActiveReportLive(newName) {
   const opt = sel && sel.querySelector(`option[value="${CSS.escape(id)}"]`);
   if (opt) opt.textContent = name || DEFAULT_REPORT_NAME;
 
-  scheduleAutosave();
+  saveActiveReportFromUI();
 }
 
 function commitReportName() {
@@ -1533,6 +1533,59 @@ function deleteActiveReport() {
   refreshReportSelect();
   status("Rapport supprimé ✅");
   scheduleCloudSave();
+}
+
+/***********************
+ * BUNDLE export/import (pour cloud + import/export)
+ ***********************/
+function buildExportBundle() {
+  const idx = loadIndex();
+  const reports = {};
+
+  (idx.reports || []).forEach(r => {
+    const data = loadReport(r.id);
+    if (data) reports[r.id] = data;
+  });
+
+  return {
+    v: STORE_VERSION,
+    index: idx,                 // contient la liste {id,name}
+    activeReportId: getActiveReportId(),
+    reports,                     // contenu complet de chaque rapport
+    exportedAt: Date.now()
+  };
+}
+
+function applyImportBundle(bundle) {
+  try {
+    if (!bundle || bundle.v !== STORE_VERSION) return false;
+    if (!bundle.index || !Array.isArray(bundle.index.reports)) return false;
+    if (!bundle.reports || typeof bundle.reports !== "object") return false;
+
+    // 1) Sauve l'index
+    saveIndex(bundle.index);
+
+    // 2) Sauve chaque rapport
+    bundle.index.reports.forEach(r => {
+      const payload = bundle.reports[r.id];
+      if (payload && payload.v === STORE_VERSION) {
+        saveReport(r.id, payload);
+      }
+    });
+
+    // 3) Set le rapport actif
+    const wanted = bundle.activeReportId;
+    const exists = bundle.index.reports.some(r => r.id === wanted);
+    setActiveReportId(exists ? wanted : (bundle.index.reports[0]?.id || ""));
+
+    // 4) Recharge l'UI
+    loadActiveReportIntoUI();
+    refreshReportSelect();
+    return true;
+  } catch (e) {
+    console.log("applyImportBundle error", e);
+    return false;
+  }
 }
 
 function exportAllJSON() {
