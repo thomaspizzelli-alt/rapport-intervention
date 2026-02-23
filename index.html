@@ -99,6 +99,40 @@
 </head>
 
 <body>
+
+  <!-- 🔒 Connexion obligatoire (Firebase) -->
+  <div id="loginScreen" style="
+    position:fixed; inset:0; background:#111; color:#fff;
+    display:flex; align-items:center; justify-content:center; z-index:9999;
+  ">
+    <div style="background:#222; padding:22px; border-radius:14px; width:340px; max-width:90vw;">
+      <h2 style="margin:0 0 8px; font-size:18px;">Connexion technicien</h2>
+      <div class="muted" style="margin-bottom:12px; color:#bbb;">
+        Entre tes <b>3 initiales</b> Siemens (ex: PIZ) + ton <b>PIN</b>.
+      </div>
+
+      <div style="display:grid; gap:10px;">
+        <input id="techInitials" type="text" placeholder="Initiales (3 lettres)" maxlength="3"
+               style="width:100%; padding:10px; border-radius:10px; border:1px solid #444; background:#333; color:#fff;" />
+        <input id="techPin" type="password" inputmode="numeric" placeholder="PIN (4 chiffres)" maxlength="4"
+               style="width:100%; padding:10px; border-radius:10px; border:1px solid #444; background:#333; color:#fff;" />
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button id="btnLogin" type="button" class="primary" style="flex:1;">Connexion</button>
+        <button id="btnRegister" type="button" style="flex:1;">Inscription</button>
+      </div>
+
+      <div id="loginError" style="margin-top:10px; color:#ff8c8c; font-size:13px;"></div>
+      <div class="muted" style="margin-top:10px; color:#aaa;">
+        Premier appareil → <b>Inscription</b><br/>
+        Nouveau PC/tablette → <b>Connexion</b>
+      </div>
+    </div>
+  </div>
+
+  <div id="appRoot" style="display:none;">
+
   <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
   <h1 id="appTitle" style="margin:0;">Rapport intervention</h1>
 
@@ -110,33 +144,7 @@
 
 
   <div class="muted">
-    Offline : oui (stocké sur l’appareil). Ouvre dans Chrome/Edge/Safari.
-  </div>
-
-  <!-- Sync OneDrive (fichier lié) -->
-  <div class="card">
-    <h2 style="font-size:15px;margin:0 0 8px;">Synchronisation OneDrive (par employé)</h2>
-
-    <div class="muted" id="syncHint" style="margin-bottom:8px;">
-      Recommandé : sur OneDrive, crée un dossier <b>RapportIntervention</b> et choisis un fichier
-      <b>RapportIntervention_rapports.json</b>. (PC Edge/Chrome recommandé)
-    </div>
-
-    <div class="row">
-      <div style="flex:1; min-width:260px;">
-        <div class="small">Fichier lié</div>
-        <div id="syncFileLabel" class="muted">Aucun fichier lié</div>
-      </div>
-    </div>
-
-    <div class="row" style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
-      <button id="linkSyncBtn" type="button" class="primary">🔗 Lier mon fichier OneDrive</button>
-      <button id="syncLoadBtn" type="button">🔄 Charger</button>
-      <button id="syncSaveBtn" type="button">💾 Sauver maintenant</button>
-      <button id="unlinkSyncBtn" type="button">✖ Dissocier</button>
-    </div>
-
-    <div class="muted" id="syncStatus">—</div>
+    Offline : oui (stocké sur l’appareil) + synchronisation cloud quand internet revient.
   </div>
 
   <!-- Gestion multi-rapports -->
@@ -228,14 +236,56 @@
     <textarea id="preview"></textarea>
   </div>
 
+  </div>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCAW4QiWBVbMviTXIBJgqE0Mj49bB1s4GM",
+    authDomain: "rapport-intervention-6a026.firebaseapp.com",
+    projectId: "rapport-intervention-6a026",
+    storageBucket: "rapport-intervention-6a026.firebasestorage.app",
+    messagingSenderId: "79526269222",
+    appId: "1:79526269222:web:16809f0cf74acf85a071e7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Offline-first (IndexedDB cache)
+  try { await enableIndexedDbPersistence(db); } catch(e) {}
+
+  window.FirebaseBridge = {
+    auth,
+    db,
+    fns: {
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut,
+      doc,
+      setDoc,
+      getDoc
+    }
+  };
+
+  // Tell the page Firebase is ready
+  window.dispatchEvent(new Event("firebase-ready"));
+</script>
+
 <script>
 /***********************
  * VERSION (UI uniquement)
  ***********************/
-const APP_VERSION = "2.3.0-onedrive";
+const APP_VERSION = "2.4.0-firebase";
 function renderAppTitle() {
   const h = document.getElementById("appTitle");
-  if (h) h.textContent = `Rapport intervention — génération rapide (v${APP_VERSION})`;
+  if (h) h.textContent = "Rapport intervention";
 }
 
 /***********************
@@ -309,239 +359,80 @@ function status(msg) {
   setTimeout(()=> el.textContent="", 1800);
 }
 
+
 /***********************
- * OneDrive-friendly sync via "Fichier lié"
+ * Firebase (login + sync)
  ***********************/
-const SYNC_SUGGESTED_FILENAME = "RapportIntervention_rapports.json";
-const SYNC_DB = "rapport_intervention_sync_db";
-const SYNC_STORE = "kv";
-const SYNC_KEY_HANDLE = "sync_file_handle_v1";
+let TECH_ID = "";
+let cloudSaveTimer = null;
+let cloudBusy = false;
 
-let syncFileHandle = null;
-let syncAutosaveTimer = null;
-let syncIsBusy = false;
-let lastSyncHash = "";
-let autosaveEnabled = true;
+// Wait for Firebase SDK (module) to be ready
+function waitFirebaseReady() {
+  return new Promise((resolve) => {
+    if (window.FirebaseBridge && window.FirebaseBridge.auth && window.FirebaseBridge.db) return resolve();
+    window.addEventListener("firebase-ready", () => resolve(), { once:true });
+  });
+}
 
-function hasFileSystemAccess() {
-  return !!(window.showOpenFilePicker || window.showSaveFilePicker) && !!window.FileSystemFileHandle;
+function normalizeTechId(s){
+  return (s || "").trim().toUpperCase().replace(/[^A-Z]/g,"").slice(0,3);
 }
-function setSyncStatus(msg) {
-  const el = document.getElementById("syncStatus");
-  if (el) el.textContent = msg;
+function normalizePin(s){
+  return (s || "").trim().replace(/\D/g,"").slice(0,4);
 }
-function setSyncFileLabel(msg) {
-  const el = document.getElementById("syncFileLabel");
-  if (el) el.textContent = msg;
+function buildEmail(initials){ return `${(initials||"").toLowerCase()}@rapport.local`; }
+// Firebase demande >= 6 caractères → on combine PIN + initiales (ex: 1937PIZ)
+function buildPassword(initials, pin){ return `${pin}${initials}`; }
+
+function getCloudDocRef(){
+  const { db, fns } = window.FirebaseBridge;
+  return fns.doc(db, "tech", (TECH_ID || "").toLowerCase(), "bundle", "main");
 }
-function quickHash(str) {
-  let h = 2166136261;
-  for (let i=0;i<str.length;i++){
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return String(h >>> 0);
-}
-// IndexedDB
-function idbOpen() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(SYNC_DB, 1);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(SYNC_STORE)) db.createObjectStore(SYNC_STORE);
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-async function idbSet(key, value) {
-  const db = await idbOpen();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(SYNC_STORE, "readwrite");
-    tx.objectStore(SYNC_STORE).put(value, key);
-    tx.oncomplete = () => { db.close(); resolve(); };
-    tx.onerror = () => { db.close(); reject(tx.error); };
-  });
-}
-async function idbGet(key) {
-  const db = await idbOpen();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(SYNC_STORE, "readonly");
-    const req = tx.objectStore(SYNC_STORE).get(key);
-    req.onsuccess = () => { db.close(); resolve(req.result); };
-    req.onerror = () => { db.close(); reject(req.error); };
-  });
-}
-async function idbDel(key) {
-  const db = await idbOpen();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(SYNC_STORE, "readwrite");
-    tx.objectStore(SYNC_STORE).delete(key);
-    tx.oncomplete = () => { db.close(); resolve(); };
-    tx.onerror = () => { db.close(); reject(tx.error); };
-  });
-}
-async function tryRestoreHandleFromIDB() {
-  try { return await idbGet(SYNC_KEY_HANDLE); } catch { return null; }
-}
-async function requestHandlePermission(handle, writable) {
+
+async function cloudLoadNow(reason="auto") {
+  if (!TECH_ID) return;
+  const { fns } = window.FirebaseBridge;
   try {
-    const opts = { mode: writable ? "readwrite" : "read" };
-    if (handle.queryPermission) {
-      const q = await handle.queryPermission(opts);
-      if (q === "granted") return true;
-    }
-    if (handle.requestPermission) {
-      const r = await handle.requestPermission(opts);
-      return r === "granted";
-    }
-    return true;
-  } catch { return false; }
-}
-async function pickOrCreateSyncFile() {
-  if (!hasFileSystemAccess()) {
-    alert("Ton navigateur ne supporte pas la liaison directe de fichier.\n\nUtilise Export/Import (ou Edge/Chrome sur PC).");
-    return null;
-  }
-  const handle = await window.showSaveFilePicker({
-    suggestedName: SYNC_SUGGESTED_FILENAME,
-    types: [{ description: "JSON", accept: { "application/json": [".json"] } }]
-  });
-  const ok = await requestHandlePermission(handle, true);
-  if (!ok) { alert("Permission refusée pour écrire dans ce fichier."); return null; }
+    const snap = await fns.getDoc(getCloudDocRef());
+    if (!snap.exists()) return false;
+    const data = snap.data();
+    if (!data || !data.bundle) return false;
 
-  try {
-    const file = await handle.getFile();
-    if (file.size === 0) {
-      const bundle = buildExportBundle();
-      await writeHandleJSON(handle, bundle);
-    }
-  } catch {}
-  return handle;
-}
-async function writeHandleJSON(handle, obj) {
-  const txt = JSON.stringify(obj, null, 2);
-  const w = await handle.createWritable();
-  await w.write(txt);
-  await w.close();
-}
-async function readHandleJSON(handle) {
-  const file = await handle.getFile();
-  const txt = await file.text();
-  return safeParseJSON(txt);
-}
-function buildExportBundle() {
-  const idx = loadIndex();
-  return {
-    v: STORE_VERSION,
-    exportedAt: Date.now(),
-    reports: idx.reports.map(r => ({
-      id: r.id,
-      name: r.name,
-      data: loadReport(r.id) || defaultPayload()
-    })),
-    active: getActiveReportId()
-  };
-}
-function applyImportBundle(bundle) {
-  if (!bundle || bundle.v !== STORE_VERSION || !Array.isArray(bundle.reports)) {
-    alert("Fichier de synchro invalide.");
+    const ok = applyImportBundle(data.bundle);
+    if (ok) status(`Cloud chargé ✅ (${reason})`);
+    return ok;
+  } catch (e) {
+    console.log("Cloud load error", e);
     return false;
   }
-  const old = loadIndex();
-  old.reports.forEach(r => deleteReportStorage(r.id));
-
-  const idx = { v: STORE_VERSION, reports: [] };
-  bundle.reports.forEach(r => {
-    if (!r.id || !r.name) return;
-    idx.reports.push({ id: r.id, name: r.name });
-    const data = (r.data && r.data.v === STORE_VERSION) ? r.data : defaultPayload();
-    saveReport(r.id, data);
-  });
-
-  if (!idx.reports.length) {
-    ensureAtLeastOneReport();
-  } else {
-    saveIndex(idx);
-    setActiveReportId(bundle.active && idx.reports.some(x=>x.id===bundle.active) ? bundle.active : idx.reports[0].id);
-  }
-
-  loadActiveReportIntoUI();
-  refreshReportSelect();
-  return true;
 }
-async function syncSaveNow(reason="manuel") {
-  if (!syncFileHandle) { setSyncStatus("Aucun fichier lié."); return; }
-  if (syncIsBusy) return;
-  syncIsBusy = true;
-  try {
-    const ok = await requestHandlePermission(syncFileHandle, true);
-    if (!ok) { setSyncStatus("Permission refusée (écriture)."); return; }
 
+async function cloudSaveNow(reason="auto") {
+  if (!TECH_ID || cloudBusy) return;
+  cloudBusy = true;
+  const { fns } = window.FirebaseBridge;
+  try {
     const bundle = buildExportBundle();
-    bundle._meta = { app: "rapport_intervention", appVersion: APP_VERSION, savedAt: Date.now() };
-    lastSyncHash = quickHash(JSON.stringify(bundle));
+    bundle._meta = { app: "rapport_intervention", savedAt: Date.now(), reason };
 
-    await writeHandleJSON(syncFileHandle, bundle);
-    setSyncStatus(`Sauvegardé ✅ (${reason}) — ${new Date().toLocaleString()}`);
+    await fns.setDoc(getCloudDocRef(), {
+      techId: TECH_ID,
+      updatedAt: Date.now(),
+      bundle
+    }, { merge: true });
+
   } catch (e) {
-    console.error(e);
-    setSyncStatus("Erreur sauvegarde ⚠️");
+    console.log("Cloud save error", e);
   } finally {
-    syncIsBusy = false;
+    cloudBusy = false;
   }
 }
-async function syncLoadNow(reason="manuel") {
-  if (!syncFileHandle) { setSyncStatus("Aucun fichier lié."); return; }
-  if (syncIsBusy) return;
-  syncIsBusy = true;
-  try {
-    const ok = await requestHandlePermission(syncFileHandle, false);
-    if (!ok) { setSyncStatus("Permission refusée (lecture)."); return; }
 
-    const bundle = await readHandleJSON(syncFileHandle);
-    if (!bundle) { setSyncStatus("Fichier vide/invalide ⚠️"); return; }
-
-    const h = quickHash(JSON.stringify(bundle));
-    if (h === lastSyncHash) { setSyncStatus(`Déjà à jour ✅ (${reason})`); return; }
-
-    const okApply = applyImportBundle(bundle);
-    if (okApply) {
-      lastSyncHash = h;
-      setSyncStatus(`Chargé ✅ (${reason}) — ${new Date().toLocaleString()}`);
-      status("Synchro chargée ✅");
-    }
-  } catch (e) {
-    console.error(e);
-    setSyncStatus("Erreur chargement ⚠️");
-  } finally {
-    syncIsBusy = false;
-  }
-}
-function scheduleAutosave() {
-  if (!autosaveEnabled) return;
-  if (!syncFileHandle) return;
-  if (syncAutosaveTimer) clearTimeout(syncAutosaveTimer);
-  syncAutosaveTimer = setTimeout(() => syncSaveNow("auto"), 1200);
-}
-async function initSyncUI() {
-  const hint = document.getElementById("syncHint");
-  if (!hasFileSystemAccess()) {
-    if (hint) hint.innerHTML = `Ton navigateur ne supporte pas la liaison directe de fichier.<br>Utilise <b>Export/Import</b> ou ouvre cette page dans <b>Edge/Chrome (PC)</b>.`;
-  }
-  const restored = await tryRestoreHandleFromIDB();
-  if (restored) {
-    const ok = await requestHandlePermission(restored, true);
-    if (ok) {
-      syncFileHandle = restored;
-      setSyncFileLabel(`Fichier lié ✅ (${SYNC_SUGGESTED_FILENAME})`);
-      setSyncStatus("Prêt à synchroniser.");
-      await syncLoadNow("auto au démarrage");
-      return;
-    }
-  }
-  setSyncFileLabel("Aucun fichier lié");
-  setSyncStatus("—");
+function scheduleCloudSave() {
+  if (!TECH_ID) return;
+  if (cloudSaveTimer) clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(() => cloudSaveNow("auto"), 900);
 }
 
 /***********************
@@ -1449,7 +1340,7 @@ function saveActiveReportFromUI() {
   };
   saveReport(id, payload);
 
-  scheduleAutosave();
+  scheduleCloudSave();
 }
 
 function loadActiveReportIntoUI() {
@@ -1523,7 +1414,40 @@ function renameActiveReport(newName) {
   r.name = name || DEFAULT_REPORT_NAME;
   saveIndex(idx);
   refreshReportSelect();
+  scheduleCloudSave();
+}
+
+function renameActiveReportLive(newName) {
+  const name = (newName ?? ""); // on garde vide si l'utilisateur efface
+  const idx = loadIndex();
+  const id = getActiveReportId();
+  const r = idx.reports.find(x => x.id === id);
+  if (!r) return;
+
+  r.name = name; // <-- vide autorisé pendant la saisie
+  saveIndex(idx);
+
+  // Met à jour juste l'option du select, sans refresh complet (sinon ça réécrit l'input)
+  const sel = document.getElementById("reportSelect");
+  const opt = sel && sel.querySelector(`option[value="${CSS.escape(id)}"]`);
+  if (opt) opt.textContent = name || DEFAULT_REPORT_NAME;
+
   scheduleAutosave();
+}
+
+function commitReportName() {
+  const input = document.getElementById("reportName");
+  const finalName = (input.value || "").trim();
+
+  // si vide à la fin -> on remet le nom par défaut
+  if (!finalName) {
+    input.value = DEFAULT_REPORT_NAME;
+    renameActiveReport(DEFAULT_REPORT_NAME); // ta fonction existante, OK ici
+    return;
+  }
+
+  // sinon on commit proprement
+  renameActiveReport(finalName); // ta fonction existante
 }
 
 function createNewReport() {
@@ -1538,7 +1462,7 @@ function createNewReport() {
   loadActiveReportIntoUI();
   refreshReportSelect();
   status("Nouveau rapport créé ✅");
-  scheduleAutosave();
+  scheduleCloudSave();
 }
 
 function duplicateActiveReport() {
@@ -1565,7 +1489,7 @@ function duplicateActiveReport() {
   loadActiveReportIntoUI();
   refreshReportSelect();
   status("Rapport dupliqué ✅");
-  scheduleAutosave();
+  scheduleCloudSave();
 }
 
 function resetCurrentReportSilentAndRename() {
@@ -1581,7 +1505,7 @@ function resetCurrentReportSilentAndRename() {
   loadActiveReportIntoUI();
   refreshReportSelect();
   status("Rapport réinitialisé ✅");
-  scheduleAutosave();
+  scheduleCloudSave();
 }
 
 function deleteActiveReport() {
@@ -1608,7 +1532,7 @@ function deleteActiveReport() {
   loadActiveReportIntoUI();
   refreshReportSelect();
   status("Rapport supprimé ✅");
-  scheduleAutosave();
+  scheduleCloudSave();
 }
 
 function exportAllJSON() {
@@ -1636,7 +1560,7 @@ async function importAllJSON() {
     const bundle = safeParseJSON(txt);
     const ok = applyImportBundle(bundle);
     if (ok) status("Import OK ✅");
-    scheduleAutosave();
+    scheduleCloudSave();
   };
   input.click();
 }
@@ -1652,7 +1576,7 @@ function resetCurrentReport() {
   loadActiveReportIntoUI();
   refreshReportSelect();
   status("Rapport réinitialisé ✅");
-  scheduleAutosave();
+  scheduleCloudSave();
 }
 
 /***********************
@@ -1745,39 +1669,16 @@ document.getElementById("reportSelect").addEventListener("change", (e) => {
   refreshReportSelect();
   status("Rapport chargé ✅");
 });
-document.getElementById("reportName").addEventListener("input", (e) => { renameActiveReport(e.target.value); });
+const reportNameEl = document.getElementById("reportName");
 
-/***********************
- * Sync Buttons
- ***********************/
-document.getElementById("linkSyncBtn").addEventListener("click", async () => {
-  try {
-    const handle = await pickOrCreateSyncFile();
-    if (!handle) return;
-    syncFileHandle = handle;
-    await idbSet(SYNC_KEY_HANDLE, handle);
-    setSyncFileLabel(`Fichier lié ✅ (${SYNC_SUGGESTED_FILENAME})`);
-    setSyncStatus("Fichier lié. Chargement...");
-    await syncLoadNow("après liaison");
-    await syncSaveNow("init");
-    status("OneDrive lié ✅");
-  } catch (e) {
-    console.error(e);
-    setSyncStatus("Liaison annulée.");
-  }
+reportNameEl.addEventListener("input", (e) => {
+  // pendant la saisie: on ne force PAS "Nouveau rapport"
+  renameActiveReportLive(e.target.value);
 });
 
-document.getElementById("syncLoadBtn").addEventListener("click", () => syncLoadNow("manuel"));
-document.getElementById("syncSaveBtn").addEventListener("click", () => syncSaveNow("manuel"));
-
-document.getElementById("unlinkSyncBtn").addEventListener("click", async () => {
-  const ok = confirm("Dissocier le fichier OneDrive pour CET appareil ?\n\n(Ça ne supprime pas le fichier, juste le lien.)");
-  if (!ok) return;
-  syncFileHandle = null;
-  await idbDel(SYNC_KEY_HANDLE);
-  setSyncFileLabel("Aucun fichier lié");
-  setSyncStatus("Dissocié.");
-  status("Dissocié ✅");
+reportNameEl.addEventListener("blur", () => {
+  // quand on quitte le champ: si vide -> on force le nom par défaut
+  commitReportName();
 });
 
 /***********************
@@ -1799,23 +1700,129 @@ darkBtn.addEventListener("click", () => {
  ***********************/
 renderAppTitle();
 
-ensureAtLeastOneReport();
-if (!getActiveReportId()) {
-  const idx = loadIndex();
-  setActiveReportId(idx.reports[0].id);
-}
-refreshReportSelect();
-
-(async function initLoad() {
-  const id = getActiveReportId();
-  const data = id ? loadReport(id) : null;
-  if (!data) {
-    const payload = defaultPayload();
-    saveReport(id, payload);
-  }
-  loadActiveReportIntoUI();
-  await initSyncUI();
+// Ajoute un bouton Déconnexion (si pas déjà présent)
+(function ensureLogoutBtn(){
+  const host = document.querySelector("div[style*='justify-content:space-between'] div[style*='gap:8px']");
+  if (!host) return;
+  if (document.getElementById("logoutBtn")) return;
+  const b = document.createElement("button");
+  b.id = "logoutBtn";
+  b.type = "button";
+  b.textContent = "⎋ Déconnexion";
+  host.appendChild(b);
 })();
+
+function initLocalUI() {
+  ensureAtLeastOneReport();
+  if (!getActiveReportId()) {
+    const idx = loadIndex();
+    setActiveReportId(idx.reports[0].id);
+  }
+  refreshReportSelect();
+
+  (function initLoadLocalOnly() {
+    const id = getActiveReportId();
+    const data = id ? loadReport(id) : null;
+    if (!data) {
+      const payload = defaultPayload();
+      saveReport(id, payload);
+    }
+    loadActiveReportIntoUI();
+  })();
+}
+
+(async function initAuthAndCloud() {
+  // Lock UI until logged in
+  const appRoot = document.getElementById("appRoot");
+  const loginScreen = document.getElementById("loginScreen");
+  const initialsInput = document.getElementById("techInitials");
+  const pinInput = document.getElementById("techPin");
+  const errBox = document.getElementById("loginError");
+
+  function showErr(msg){ errBox.textContent = msg || ""; }
+
+  await waitFirebaseReady();
+
+  const { auth, fns } = window.FirebaseBridge;
+
+  document.getElementById("btnRegister").addEventListener("click", async () => {
+    const initials = normalizeTechId(initialsInput.value);
+    const pin = normalizePin(pinInput.value);
+
+    if (initials.length !== 3 || pin.length !== 4) {
+      showErr("Initiales (3 lettres) + PIN (4 chiffres) obligatoires.");
+      return;
+    }
+
+    showErr("");
+    try {
+      await fns.createUserWithEmailAndPassword(auth, buildEmail(initials), buildPassword(initials, pin));
+    } catch (e) {
+      // cas fréquent: compte déjà existant
+      showErr(e && e.code === "auth/email-already-in-use"
+        ? "Compte déjà créé. Clique sur Connexion."
+        : (e && e.message ? e.message : "Erreur inscription"));
+    }
+  });
+
+  document.getElementById("btnLogin").addEventListener("click", async () => {
+    const initials = normalizeTechId(initialsInput.value);
+    const pin = normalizePin(pinInput.value);
+
+    if (initials.length !== 3 || pin.length !== 4) {
+      showErr("Initiales (3 lettres) + PIN (4 chiffres) obligatoires.");
+      return;
+    }
+
+    showErr("");
+    try {
+      await fns.signInWithEmailAndPassword(auth, buildEmail(initials), buildPassword(initials, pin));
+    } catch (e) {
+      showErr("Connexion impossible. Vérifie initiales + PIN.");
+    }
+  });
+
+  // Déconnexion
+  document.addEventListener("click", async (e) => {
+    if (!e.target || e.target.id !== "logoutBtn") return;
+    try { await fns.signOut(auth); } catch {}
+    TECH_ID = "";
+    localStorage.removeItem("tech_id");
+    appRoot.style.display = "none";
+    loginScreen.style.display = "flex";
+    showErr("");
+  });
+
+  fns.onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      TECH_ID = "";
+      localStorage.removeItem("tech_id");
+      appRoot.style.display = "none";
+      loginScreen.style.display = "flex";
+      return;
+    }
+
+    // TECH_ID depuis l'email technique "PIZ@rapport.local"
+    const email = (user.email || "").toUpperCase();
+    const initials = normalizeTechId(email.split("@")[0] || "");
+    TECH_ID = initials || localStorage.getItem("tech_id") || "";
+    localStorage.setItem("tech_id", TECH_ID);
+
+    // UI ON
+    loginScreen.style.display = "none";
+    appRoot.style.display = "block";
+
+    // Init local (offline) + tente de charger le cloud
+    initLocalUI();
+
+    const loaded = await cloudLoadNow("au démarrage");
+    if (!loaded) {
+      // Premier lancement → pousse l'état local vers le cloud
+      await cloudSaveNow("init");
+    }
+  });
+})();
+
 
 /***********************
  * FEEDBACK / AMELIORATION
