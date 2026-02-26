@@ -843,11 +843,24 @@ function renderRevRepairBlock(type) {
   chk.checked = !!data.enabled;
 
   chk.addEventListener("change", () => {
-    data.enabled = !!chk.checked;
-    render();              // pour afficher/cacher la liste
-    updatePreview();
-    saveActiveReportFromUI();
-  });
+  data.enabled = !!chk.checked;
+
+  // afficher / cacher sans re-render global
+  if (data.enabled) {
+    const newBlock = renderRevRepairBlock(type);
+    if (newBlock) {
+      const parent = wrap.parentNode;
+      if (parent) parent.replaceChild(newBlock, wrap);
+    }
+  } else {
+    // juste supprimer la liste si décoché
+    const grid = wrap.querySelector(".revfix-grid");
+    if (grid) grid.remove();
+  }
+
+  updatePreview();
+  saveActiveReportFromUI();
+});
 
   wrap.appendChild(el("label", { for: chkId }, [
     chk,
