@@ -2,7 +2,7 @@
 // SERVICE WORKER — Rapport intervention
 // ===============================
 
-const CACHE_NAME = "rapport-intervention-v9"; // <-- change à chaque update
+const CACHE_NAME = "rapport-intervention-v10"; // <-- change à chaque update
 
 const STATIC_ASSETS = [
   "./",
@@ -69,3 +69,4 @@ self.addEventListener("fetch", (event) => {
     caches.match(req).then((cached) => cached || fetch(req))
   );
 });
+
