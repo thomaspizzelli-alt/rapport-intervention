@@ -1,4 +1,4 @@
-const CACHE_NAME = "rapport-intervention-v7"; // <-- change à chaque update
+const CACHE_NAME = "rapport-intervention-v8"; // <-- change à chaque update
 const STATIC_ASSETS = [
   "./",
   "./manifest.webmanifest",
@@ -46,4 +46,5 @@ self.addEventListener("fetch", (event) => {
   );
 
 });
+
 
