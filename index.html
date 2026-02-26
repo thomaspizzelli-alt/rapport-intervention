@@ -2163,9 +2163,36 @@ window.addEventListener("load", () => {
 </script>
 
 <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js");
-  }
+if ("serviceWorker" in navigator) {
+
+  // ⚠️ Change ce numéro à chaque release (même que CACHE_NAME)
+  const SW_VERSION = "v10";
+
+  navigator.serviceWorker
+    .register("./service-worker.js?" + SW_VERSION)
+    .then((reg) => {
+
+      // 🔄 Force la vérification d’update à chaque ouverture
+      reg.update();
+
+      // 🔥 Si un nouveau SW prend le contrôle → reload auto
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+
+      // 🔥 Si le SW envoie un message (activation)
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        if (event.data && event.data.type === "RELOAD_PAGE") {
+          window.location.reload();
+        }
+      });
+
+    })
+    .catch((err) => console.log("SW error:", err));
+}
 </script>
 
 </body>
