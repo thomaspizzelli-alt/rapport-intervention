@@ -466,7 +466,7 @@ const DM_HELP = "Ici tu listes UNIQUEMENT les déclencheurs manuels NON testés 
 
 const TYPES = {
   rev: {
-    title: "Révision annuelle de la centrale de détection incendie (ECS) avec contrôle des équipements associés et vérification du système de sécurité incendie",
+    title: "Révision annuelle de l’installation de détection incendie – Siemens\nLes contrôles effectués dans le cadre de cette maintenance ne constituent pas une vérification complète de l’ensemble des dispositifs du système de sécurité incendie, mais correspondent au minimum requis par les normes AEAI.",
     items: [
       "Coordination avec le personnel sur place",
       "Information au client : sécurité absente ou affaiblie durant notre présence sur site",
@@ -644,8 +644,7 @@ const REASONS_CUSTOM = {
 
   ],
    "Mise à jour des plans pompiers": [
-    "Attente d’informations du client (plans DWG, noms des locaux, etc.)",
-    "Attente des corrections internes de Siemens"
+    "Attente d’informations du client (plans DWG, noms des locaux, etc.)"
   ],
 
   "Test des temps de présence et reconnaissance": [
@@ -656,6 +655,13 @@ const REASONS_CUSTOM = {
     "Pas possible car locaux occupés et le client ne veut pas déranger le personnel"
   ]
 };
+
+// ✅ Plans pompiers : menu déroulant affiché seulement quand c'est ✓
+const PLAN_POMPIERS_ITEM = "Mise à jour des plans pompiers";
+const PLAN_POMPIERS_SIEMENS_OPTIONS = [
+  "—",
+  "En attente corrections internes Siemens"
+];
 
 const DRGT_CATALOG = [
   "Ligne ouverte",
@@ -674,8 +680,8 @@ const CLOSURE = {
     titleUI: "Constat de fin d’intervention (AR)",
     header: "CONSTAT DE FIN D’INTERVENTION :",
     options: [
-      "La révision annuelle s’est déroulée correctement. Les tests réalisés sur l’installation sont conformes et l’installation est opérationnelle.",
-      "Des défauts ont été constatés sur l’installation. Tous les tests/corrections n’ont pas pu être finalisés."
+      "La révision annuelle s’est déroulée avec succès. Les tests réalisés sur l’installation sont conformes et celle-ci est opérationnelle. Le maintien de la conformité globale de l’installation demeure toutefois sous la responsabilité du propriétaire et de l’exploitant.",
+      "Des défauts ont été constatés sur l’installation. Tous les tests/corrections n’ont pas pu être finalisés. Le maintien de la conformité globale de l’installation demeure toutefois sous la responsabilité du propriétaire et de l’exploitant."
     ],
     reasonsMode: "multi",
     reasons: [
@@ -1123,6 +1129,10 @@ function renderTriItem(type, idx, text) {
   const day = getDay();
   initDayStatesIfNeeded(type, day);
   const st = day.states[type][idx];
+  // ✅ Init champ spécial pour plans pompiers
+if (type === "rev" && text === PLAN_POMPIERS_ITEM) {
+  if (!st.planSiemens) st.planSiemens = "—";
+}
 
   const item = el("div", { class:"tri-item neutral" });
   const left = el("div", { class:"tri-left" });
@@ -1155,6 +1165,28 @@ function renderTriItem(type, idx, text) {
     saveActiveReportFromUI();
   });
   right.appendChild(sel);
+  // ✅ Dropdown Siemens uniquement si ✓ (vert) sur plans pompiers
+let planSel = null;
+
+if (type === "rev" && text === PLAN_POMPIERS_ITEM) {
+  planSel = el("select", { style:"display:none; min-width: 260px;" });
+
+  PLAN_POMPIERS_SIEMENS_OPTIONS.forEach(o =>
+    planSel.appendChild(el("option", { value:o, text:o }))
+  );
+
+  const wanted = st.planSiemens || "Tout bon";
+planSel.value = PLAN_POMPIERS_SIEMENS_OPTIONS.includes(wanted) ? wanted : "Tout bon";
+st.planSiemens = planSel.value;
+
+  planSel.addEventListener("change", (e) => {
+    st.planSiemens = e.target.value || "—";
+    updatePreview();
+    saveActiveReportFromUI();
+  });
+
+  right.appendChild(planSel);
+}
 
   let exUI = null;
 
@@ -1182,12 +1214,21 @@ function renderTriItem(type, idx, text) {
     const reasonsNow = (REASONS_CUSTOM && REASONS_CUSTOM[text]) ? REASONS_CUSTOM[text] : REASONS;
     if (!reasonsNow.includes(st.reason)) st.reason = reasonsNow[0];
     sel.value = st.reason || reasonsNow[0];
+if (type === "rev" && text === PLAN_POMPIERS_ITEM) {
+  sel.style.display = (st.state === 2) ? "block" : "none"; // raison seulement si ✕
+}
 
     if (exUI) {
       const key = (currentType === "det") ? "det_exceptions" : "dm_exceptions";
       const hasAny = (globalExceptions[key] || []).some(x => (x.label || "").trim());
       exUI.style.display = (st.state === 1 || st.state === 2 || hasAny) ? "block" : "none";
     }
+// ✅ Affiche le menu Siemens seulement si l'item est en ✓
+if (planSel) {
+  planSel.style.display = (st.state === 1) ? "block" : "none";
+  // Si tu repasses en — ou ✕, on remet "Tout bon" (optionnel mais propre)
+  if (st.state !== 1) st.planSiemens = "—";
+}
   }
 
   item.addEventListener("click", (e) => {
@@ -1384,7 +1425,15 @@ function dayBlockToLines(type, day, dayNumber) {
 
   cfg.items.forEach((txt, idx) => {
     const st = day.states[type][idx];
-    if (st.state === 1) done.push(txt);
+    if (st.state === 1) {
+  if (type === "rev" && txt === PLAN_POMPIERS_ITEM) {
+    const v = (st.planSiemens || "—").trim();
+    if (v && v !== "—") done.push(`${txt} — ${v}`);
+    else done.push(txt);
+  } else {
+    done.push(txt);
+  }
+}
 
     if (st.state === 2) {
       // On ne met PAS l'item "exceptions" dans la section NON RÉALISÉ (on le liste dans son bloc dédié)
@@ -2166,7 +2215,7 @@ window.addEventListener("load", () => {
 if ("serviceWorker" in navigator) {
 
   // ⚠️ Change ce numéro à chaque release (même que CACHE_NAME)
-  const SW_VERSION = "v10";
+  const SW_VERSION = "v11";
 
   navigator.serviceWorker
     .register("./service-worker.js?" + SW_VERSION)
