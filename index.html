@@ -139,7 +139,7 @@
     </div>
   </div>
 
-  <div id="appRoot" style="display:none;">
+  <div id="appRoot">
 
   <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
   <h1 id="appTitle" style="margin:0;">Rapport intervention</h1>
@@ -505,6 +505,7 @@ const TYPES = {
       "Remise en ordre de la centrale",
       "Mise à jour des plans pompiers",
       "Formation client / refresh (rappel)",
+      "Suppression de la mémoire des événements",
       "Traitements techniques",
       "Finalisation révision",
       "Remise en service de la centrale feu",
@@ -635,6 +636,7 @@ const REASONS_CUSTOM = {
     "Commande en attente"
   ],
   "Contrôle des klaxons": [
+  "Pas pu être testés, le client n’ayant pas averti le personnel au préalable.",
   "Pas souhaité par le client car cela dérange le personnel",
   "Pas souhaité par le client car cela dérange les habitants",
   "Pas souhaité par le client car cela dérange les résidents"
@@ -1087,11 +1089,21 @@ function buildExceptionsUI(key, helpText) {
 
       const sel = el("select", {});
       DETECTEUR_MOTIFS.forEach(m => sel.appendChild(el("option", { value:m, text:m })));
-      sel.value = row.motif || DETECTEUR_MOTIFS[0];
+      sel.value = row.motif || (row.motifCustom ? "Autre" : DETECTEUR_MOTIFS[0]);
       sel.addEventListener("change", (e) => {
-        globalExceptions[key][rIdx].motif = e.target.value;
-        updatePreview(); saveActiveReportFromUI();
-      });
+  const val = e.target.value;
+  globalExceptions[key][rIdx].motif = val;
+
+  if (val === "Autre") {
+    globalExceptions[key][rIdx].motifCustom = "";
+  } else {
+    delete globalExceptions[key][rIdx].motifCustom;
+  }
+
+  renderRows();
+  updatePreview();
+  saveActiveReportFromUI();
+});
 
       const del = el("button", { type:"button", text:"✕" });
       del.addEventListener("click", (e) => {
@@ -1103,6 +1115,21 @@ function buildExceptionsUI(key, helpText) {
 
       line.appendChild(inp);
       line.appendChild(sel);
+if (row.motif === "Autre") {
+  const customInput = el("input", {
+    type: "text",
+    value: row.motifCustom || "",
+    placeholder: "Préciser le motif..."
+  });
+
+  customInput.addEventListener("input", (e) => {
+    globalExceptions[key][rIdx].motifCustom = e.target.value;
+    updatePreview();
+    saveActiveReportFromUI();
+  });
+
+  line.appendChild(customInput);
+}
       line.appendChild(del);
       list.appendChild(line);
     });
@@ -1518,8 +1545,13 @@ function updatePreview() {
 
   // MR: détecteurs non remplacés (global)
   if (currentType === "det") {
-    const ex = (globalExceptions.det_exceptions || [])
-      .map(x => ({ label:(x.label||"").trim(), motif: x.motif || DETECTEUR_MOTIFS[0] }))
+  const ex = (globalExceptions.det_exceptions || [])
+    .map(x => ({
+      label: (x.label || "").trim(),
+      motif: x.motif === "Autre"
+        ? (x.motifCustom || "Autre")
+        : (x.motif || DETECTEUR_MOTIFS[0])
+    }))
       .filter(x => x.label);
 
     if (ex.length) {
@@ -1532,7 +1564,9 @@ function updatePreview() {
   // AR: déclencheurs manuels non testés (global)
   if (currentType === "rev") {
     const ex = (globalExceptions.dm_exceptions || [])
-      .map(x => ({ label:(x.label||"").trim(), motif: x.motif || DETECTEUR_MOTIFS[0] }))
+      .map(x => ({ label:(x.label||"").trim(), motif: x.motif === "Autre"
+  ? (x.motifCustom || "Autre")
+  : (x.motif || DETECTEUR_MOTIFS[0]) }))
       .filter(x => x.label);
 
     if (ex.length) {
@@ -2095,19 +2129,19 @@ function initLocalUI() {
     try { await fns.signOut(auth); } catch {}
     TECH_ID = "";
     localStorage.removeItem("tech_id");
-    appRoot.style.display = "none";
     loginScreen.style.display = "flex";
     showErr("");
   });
 
   fns.onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      TECH_ID = "";
-      localStorage.removeItem("tech_id");
-      appRoot.style.display = "none";
-      loginScreen.style.display = "flex";
-      return;
-    }
+  TECH_ID = "";
+  localStorage.removeItem("tech_id");
+
+  // On affiche le login MAIS on ne bloque plus l'app
+  loginScreen.style.display = "flex";
+  return;
+}
 
     // TECH_ID depuis l'email technique "PIZ@rapport.local"
     const email = (user.email || "").toUpperCase();
@@ -2215,7 +2249,7 @@ window.addEventListener("load", () => {
 if ("serviceWorker" in navigator) {
 
   // ⚠️ Change ce numéro à chaque release (même que CACHE_NAME)
-  const SW_VERSION = "v11";
+  const SW_VERSION = "v12";
 
   navigator.serviceWorker
     .register("./service-worker.js?" + SW_VERSION)
