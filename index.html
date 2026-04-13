@@ -103,6 +103,238 @@
     body.dark .closure-wrap, body.dark .closure-box { border-color:#555; }
     body.dark .tri-hint { color:#aaa; }
     body.dark .revfix-wrap { border-color:#555; }
+
+.mes-switches { display:flex; gap:8px; flex-wrap:wrap; }
+.mes-chip {
+  border:1px solid #ddd; padding:10px 12px; border-radius:12px; background:#fff; cursor:pointer; user-select:none;
+}
+.mes-chip.active { background:#111; color:#fff; border-color:#111; }
+
+.mes-toggle {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 14px; border:1px solid #ddd; border-radius:12px; background:#fff; cursor:pointer;
+}
+.mes-toggle.active { border-color:#000; }
+.mes-badge {
+  font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #ddd;
+}
+
+.mes-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.mes-section { border:1px solid #ddd; border-radius:12px; padding:12px; margin-top:10px; }
+.mes-hidden { display:none !important; }
+
+.mes-control-item {
+  display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  border:1px solid #ddd; border-radius:12px; padding:10px; background:#fff; margin-top:8px; cursor:pointer;
+}
+.mes-control-main { display:flex; gap:10px; min-width:0; flex:1; }
+.mes-tri-badge {
+  width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+  border-radius:10px; border:1px solid #ddd; font-weight:700; flex:0 0 auto;
+}
+.mes-control-item.done { border-color:#bfe6c7; }
+.mes-control-item.notdone { border-color:#f0b7b7; }
+.mes-control-item.neutral .mes-tri-badge { opacity:.6; }
+.mes-reason { display:none; margin-top:8px; }
+.mes-reason.show { display:block; }
+
+body.dark .mes-chip,
+body.dark .mes-toggle,
+body.dark .mes-section,
+body.dark .mes-control-item {
+  background:#2a2a2a; border-color:#555; color:#eaeaea;
+}
+body.dark .mes-chip.active { background:#fff; color:#111; border-color:#fff; }
+body.dark .mes-badge, body.dark .mes-tri-badge { border-color:#666; color:#eaeaea; }
+
+:root{
+  --mes-card:#ffffff;
+  --mes-text:#171923;
+  --mes-muted:#667085;
+  --mes-border:#e5e7eb;
+  --mes-accent:#111827;
+  --mes-ok:#dff7e6;
+  --mes-bad:#fde7e7;
+  --mes-soft:#eef2ff;
+  --mes-shadow:0 10px 30px rgba(15,23,42,.08);
+}
+
+#mesContainer{
+  background:transparent;
+  border:none;
+  padding:0;
+  margin:10px 0;
+}
+
+#mesContainer *{box-sizing:border-box}
+
+.mes-app{max-width:1100px;margin:0 auto;padding:0}
+.mes-hero{
+  background:linear-gradient(135deg,#ffffff 0%, #eef4ff 100%);
+  border:1px solid var(--mes-border);
+  border-radius:28px;
+  box-shadow:var(--mes-shadow);
+  padding:20px;
+  margin-bottom:16px;
+}
+.mes-hero-top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.mes-hero h1{margin:0;font-size:28px;color:var(--mes-text)}
+.mes-sub{color:var(--mes-muted);font-size:14px;margin-top:6px}
+.mes-pill{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;
+  border:1px solid var(--mes-border);background:#fff;font-size:14px
+}
+.mes-top-grid{display:grid;grid-template-columns:1.2fr .9fr .9fr 1.2fr;gap:12px;margin-top:18px}
+.mes-mini-card{background:#fff;border:1px solid var(--mes-border);border-radius:20px;padding:14px}
+.mes-mini-card .label{font-size:12px;color:var(--mes-muted);margin-bottom:6px}
+.mes-mini-card input,.mes-mini-card select{
+  width:100%;padding:10px 12px;border:1px solid var(--mes-border);border-radius:14px;background:#fff;font-size:14px;
+}
+.mes-mini-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mes-mini-btn{
+  border:1px solid var(--mes-border);background:#fff;padding:10px 12px;border-radius:14px;cursor:pointer;font-size:14px;
+}
+
+.mes-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.mes-tab{
+  border:1px solid var(--mes-border);background:#fff;padding:11px 14px;border-radius:14px;cursor:pointer;font-weight:600
+}
+.mes-tab.active{background:var(--mes-accent);color:#fff;border-color:var(--mes-accent)}
+
+.mes-stack{display:grid;gap:12px}
+.mes-card{
+  background:var(--mes-card);border:1px solid var(--mes-border);border-radius:24px;
+  box-shadow:var(--mes-shadow);padding:18px
+}
+.mes-card h2{margin:0 0 10px;font-size:18px;color:var(--mes-text)}
+.mes-card h3{margin:0 0 8px;font-size:15px;color:var(--mes-text)}
+.mes-muted{color:var(--mes-muted);font-size:13px}
+.mes-section{border:1px solid var(--mes-border);border-radius:18px;padding:14px;background:#fff}
+.mes-section.soft{background:linear-gradient(180deg,#fff 0%, #f8fbff 100%)}
+.mes-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mes-switches{display:flex;gap:8px;flex-wrap:wrap}
+.mes-chip{
+  border:1px solid var(--mes-border);padding:10px 12px;border-radius:14px;background:#fff;cursor:pointer;
+  user-select:none;font-size:14px
+}
+.mes-chip.active{background:#111827;color:#fff;border-color:#111827}
+.mes-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid var(--mes-border);
+  border-radius:16px;background:#fff;cursor:pointer
+}
+.mes-toggle.active{background:var(--mes-soft);border-color:#c7d2fe}
+.mes-badge{
+  font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--mes-border);background:#fff;color:var(--mes-muted)
+}
+
+.mes-badge.is-on{
+  background:#dff7e6;
+  color:#17663a;
+  border-color:#8ed3a5;
+  font-weight:700;
+}
+
+.mes-subsection{
+  margin-top:10px;padding:12px;border:1px dashed #d6dae3;border-radius:16px;background:#fcfdff;
+}
+.mes-control-item{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  border:1px solid var(--mes-border);border-radius:16px;padding:12px;background:#fff;margin-top:8px;
+}
+.mes-control-main{display:flex;gap:10px;min-width:0;flex:1}
+.mes-tri-badge{
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid #d7dbe3;
+  font-weight:700;flex:0 0 auto;cursor:pointer;user-select:none;background:#f8fafc;
+}
+.mes-control-item.done{border-color:#bfe6c7}
+.mes-control-item.done .mes-tri-badge{background:var(--mes-ok);border-color:#bfe6c7}
+.mes-control-item.notdone{border-color:#f0b7b7}
+.mes-control-item.notdone .mes-tri-badge{background:var(--mes-bad);border-color:#f0b7b7}
+.mes-control-item.neutral .mes-tri-badge{opacity:.75}
+.mes-reason{display:none;margin-top:8px}
+.mes-reason.show{display:block}
+.mes-input, .mes-textarea, .mes-select{
+  width:100%;padding:10px 12px;border:1px solid var(--mes-border);border-radius:14px;background:#fff;font-size:14px;
+}
+.mes-textarea{min-height:150px;resize:vertical}
+.mes-smallbtn{border:1px solid var(--mes-border);background:#fff;padding:10px 12px;border-radius:12px;cursor:pointer;font-size:13px}
+.mes-editing{outline:2px solid #93c5fd}
+.mes-hidden{display:none!important}
+.mes-footer-note{margin-top:12px;font-size:12px;color:var(--mes-muted)}
+
+body.dark #mesContainer .mes-hero,
+body.dark #mesContainer .mes-mini-card,
+body.dark #mesContainer .mes-card,
+body.dark #mesContainer .mes-section,
+body.dark #mesContainer .mes-toggle,
+body.dark #mesContainer .mes-control-item,
+body.dark #mesContainer .mes-subsection{
+  background:#2a2a2a;
+  border-color:#555;
+  color:#eaeaea;
+}
+
+body.dark #mesContainer .mes-hero{
+  background:linear-gradient(135deg,#2a2a2a 0%, #31384a 100%);
+}
+body.dark #mesContainer .mes-chip,
+body.dark #mesContainer .mes-mini-btn,
+body.dark #mesContainer .mes-smallbtn,
+body.dark #mesContainer .mes-tab,
+body.dark #mesContainer .mes-badge,
+body.dark #mesContainer .mes-input,
+body.dark #mesContainer .mes-textarea,
+body.dark #mesContainer .mes-select,
+body.dark #mesContainer .mes-mini-card input,
+body.dark #mesContainer .mes-mini-card select{
+  background:#333;
+  color:#eaeaea;
+  border-color:#555;
+}
+body.dark #mesContainer .mes-chip.active,
+body.dark #mesContainer .mes-tab.active{
+  background:#fff;
+  color:#111;
+  border-color:#fff;
+}
+body.dark #mesContainer .mes-muted,
+body.dark #mesContainer .mes-sub,
+body.dark #mesContainer .mes-footer-note,
+body.dark #mesContainer .label{
+  color:#aaa;
+}
+body.dark #mesContainer .mes-control-item.done{border-color:#3a6b46}
+body.dark #mesContainer .mes-control-item.notdone{border-color:#7a3f3f}
+body.dark #mesContainer .mes-tri-badge{border-color:#666;background:#333;color:#eaeaea}
+
+body.dark #mesContainer .mes-card h2,
+body.dark #mesContainer .mes-card h3,
+body.dark #mesContainer .mes-section h3 {
+  color: #ffffff !important;
+}
+
+body.dark #mesContainer .mes-toggle span,
+body.dark #mesContainer .mes-control-main div,
+body.dark #mesContainer .mes-app,
+body.dark #mesContainer .mes-app * {
+  color:#eaeaea;
+}
+
+body.dark #mesContainer .mes-badge.is-on{
+  background:#1f4d2e;
+  color:#b7f3c9;
+  border-color:#3f8f5f;
+}
+
+body.dark #mesContainer .mes-toggle.active{
+  background:#1c2f24;
+  border-color:#3f8f5f;
+}
+
+@media (max-width: 760px){
+  .mes-top-grid,.mes-grid2,.mes-mini-actions{grid-template-columns:1fr}
+}
+
   </style>
 </head>
 
@@ -205,17 +437,18 @@
   <!-- Tabs + Constat arrivée -->
   <div class="card">
     <div class="tabs">
-      <button id="tab-rev" class="active" type="button">Révision annuelle (AR)</button>
-      <button id="tab-det" type="button">Changement détecteurs (MR)</button>
-      <button id="tab-dep" type="button">Dépannage</button>
-    </div>
+  <button id="tab-rev" class="active" type="button">Révision annuelle (AR)</button>
+  <button id="tab-det" type="button">Changement détecteurs (MR)</button>
+  <button id="tab-dep" type="button">Dépannage</button>
+  <button id="tab-mes" type="button">Mise en service</button>
+</div>
 
-    <div class="card" style="margin-top:10px;">
-      <h2 style="font-size:15px;margin:0 0 8px;">Constat à l’arrivée</h2>
-      <div id="arrivalBlocks"></div>
-    </div>
-  </div>
+    <div class="card" id="arrivalCard" style="margin-top:10px;">
+  <h2 style="font-size:15px;margin:0 0 8px;">Constat à l’arrivée</h2>
+  <div id="arrivalBlocks"></div>
+</div>
 
+<div id="mesContainer" class="card" style="display:none;"></div>
   <div class="grid">
     <div class="card">
       <h2 style="font-size:15px;margin:0 0 8px;">Liste des contrôles / actions (clic = — → ✓ → ✕ → —)</h2>
@@ -232,8 +465,8 @@
     <div id="departureBlocks"></div>
   </div>
 
-  <!-- Rapport final -->
-  <div class="card">
+    <!-- Rapport final -->
+  <div class="card" id="finalReportCard">
     <div class="row" style="justify-content: space-between; align-items: center;">
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="primary" id="copyBtn" type="button">📋 Copier le rapport</button>
@@ -374,6 +607,7 @@ function status(msg) {
 let TECH_ID = "";
 let cloudSaveTimer = null;
 let cloudBusy = false;
+let cloudLoadedOnce = false;
 
 // Wait for Firebase SDK (module) to be ready
 function waitFirebaseReady() {
@@ -398,12 +632,16 @@ function getCloudDocRef(){
   return fns.doc(db, "tech", (TECH_ID || "").toLowerCase(), "bundle", "main");
 }
 
-async function cloudLoadNow(reason="auto") {
-  if (!TECH_ID) return;
+async function cloudLoadNow(reason = "auto") {
+  if (!TECH_ID) return false;
   const { fns } = window.FirebaseBridge;
+
   try {
     const snap = await fns.getDoc(getCloudDocRef());
+    cloudLoadedOnce = true;
+
     if (!snap.exists()) return false;
+
     const data = snap.data();
     if (!data || !data.bundle) return false;
 
@@ -416,10 +654,15 @@ async function cloudLoadNow(reason="auto") {
   }
 }
 
-async function cloudSaveNow(reason="auto") {
+async function cloudSaveNow(reason = "auto") {
   if (!TECH_ID || cloudBusy) return;
+
+  // Empêche d'écraser le cloud avant d'avoir tenté un chargement
+  if (!cloudLoadedOnce && reason !== "init-empty-cloud") return;
+
   cloudBusy = true;
   const { fns } = window.FirebaseBridge;
+
   try {
     const bundle = buildExportBundle();
     bundle._meta = { app: "rapport_intervention", savedAt: Date.now(), reason };
@@ -576,6 +819,12 @@ const TYPES = {
       "Finalisation de l’intervention"
     ],
     defaultDone: []
+  },
+
+  mes: {
+    title: "MISE EN SERVICE",
+    items: [],
+    defaultDone: []
   }
 };
 
@@ -603,6 +852,17 @@ const ARRIVAL = {
     ]
   },
   dep: {
+    state: [
+      "À mon arrivée, la centrale est en service",
+      "À mon arrivée, la centrale présente des zones hors service",
+      "À mon arrivée, la centrale présente des dérangements"
+    ],
+    mode: [
+      "À mon arrivée, la centrale est en mode direct",
+      "À mon arrivée, la centrale est en mode différé"
+    ]
+  },
+  mes: {
     state: [
       "À mon arrivée, la centrale est en service",
       "À mon arrivée, la centrale présente des zones hors service",
@@ -730,6 +990,23 @@ const CLOSURE = {
       "Action client requise",
       "Travaux hors périmètre / hors contrat"
     ]
+  },
+  mes: {
+    titleUI: "Constat de fin d’intervention (Mise en service)",
+    header: "CONSTAT DE FIN :",
+    options: [
+      "La mise en service s’est déroulée correctement. L’installation est opérationnelle.",
+      "La mise en service est partielle. Des réserves restent à lever.",
+      "La mise en service n’a pas pu être finalisée."
+    ],
+    reasonsMode: "multi",
+    reasons: [
+      "Accès impossible",
+      "Matériel manquant",
+      "À finaliser",
+      "Non concerné",
+      "Autre"
+    ]
   }
 };
 
@@ -746,44 +1023,35 @@ function el(tag, attrs = {}, children = []) {
   for (const c of children) node.appendChild(c);
   return node;
 }
+
+function ensureRevRepair(day) {
+  if (!day.revRepair) {
+    day.revRepair = {
+      rev: { enabled:false, items: [] },
+      det: { enabled:false, items: [] }
+    };
+  }
+
+  if (!day.revRepair.rev) {
+    day.revRepair.rev = { enabled:false, items: [] };
+  }
+
+  if (!day.revRepair.det) {
+    day.revRepair.det = { enabled:false, items: [] };
+  }
+
+  if (!Array.isArray(day.revRepair.rev.items)) {
+    day.revRepair.rev.items = [];
+  }
+
+  if (!Array.isArray(day.revRepair.det.items)) {
+    day.revRepair.det.items = [];
+  }
+}
+
+
 function isExceptionsItem(txt) { return txt === EXCEPTIONS_ITEM; }
 
-/***********************
- * State
- ***********************/
-let currentType = "rev";
-let days = [];
-let currentDayIndex = 0;
-let globalExceptions = { det_exceptions: [], dm_exceptions: [] };
-
-function defaultDay() {
-  return {
-    dateISO: todayISO(),
-    states: { rev: [], det: [], dep: [] },
-    arrivalState: {
-      rev: { state:[true,false,false], mode:0 },
-      det: { state:[true,false,false], mode:0 },
-      dep: { state:[true,false,false], mode:0 }
-    },
-    arrivalDrgts: {
-      rev: { selected:[], custom:[] },
-      det: { selected:[], custom:[] },
-      dep: { selected:[], custom:[] }
-    },
-    closureState: {
-      rev: { status:0, reasons:[], reasonSingle:"", other:"" },
-      det: { status:0, reasons:[], reasonSingle:"", other:"" },
-      dep: { status:0, reasons:[], reasonSingle:"", other:"" }
-    },
-
-    /* ✅ NEW: Dépannage lié à la révision (AR/MR) */
-    revRepair: {
-  rev: { enabled:false, items: [] },
-  det: { enabled:false, items: [] }
-}
-  };
-}
-function getDay() { return days[currentDayIndex]; }
 
 function initDayStatesIfNeeded(type, dayObj) {
   const cfg = TYPES[type];
@@ -798,160 +1066,16 @@ function initDayStatesIfNeeded(type, dayObj) {
 
 function normalizeArrivalState(type, lastChangedIdx) {
   const st = getDay().arrivalState[type].state;
-  if (lastChangedIdx === 0 && st[0]) { st[1] = false; st[2] = false; return; }
-  if ((lastChangedIdx === 1 || lastChangedIdx === 2) && st[lastChangedIdx]) st[0] = false;
+  if (lastChangedIdx === 0 && st[0]) {
+    st[1] = false;
+    st[2] = false;
+    return;
+  }
+  if ((lastChangedIdx === 1 || lastChangedIdx === 2) && st[lastChangedIdx]) {
+    st[0] = false;
+  }
   if (!st[0] && !st[1] && !st[2]) st[0] = true;
 }
-
-/***********************
- * ✅ Indication "déjà fait" : recherche dans les jours précédents
- ***********************/
-function findPreviouslyDoneDay(type, itemIndex) {
-  for (let d = 0; d < currentDayIndex; d++) {
-    const day = days[d];
-    initDayStatesIfNeeded(type, day);
-    if (day.states[type][itemIndex]?.state === 1) return d;
-  }
-  return -1;
-}
-
-/***********************
- * ✅ UI: Dépannage lié à la révision (AR/MR)
- ***********************/
-function ensureRevRepair(day) {
-  if (!day.revRepair) {
-    day.revRepair = {
-      rev: { enabled:false, items: [] },
-      det: { enabled:false, items: [] }
-    };
-  }
-  if (!day.revRepair.rev) day.revRepair.rev = { enabled:false, items: [] };
-  if (!day.revRepair.det) day.revRepair.det = { enabled:false, items: [] };
-
-  // compat si tu avais l'ancien format (manual/auto/flash/other)
-  ["rev","det"].forEach(t => {
-    const o = day.revRepair[t];
-    if (!Array.isArray(o.items)) o.items = [];
-  });
-}
-
-function renderRevRepairBlock(type) {
-  // uniquement AR (rev) et MR (det)
-  if (type !== "rev" && type !== "det") return null;
-
-  const day = getDay();
-  ensureRevRepair(day);
-  const data = day.revRepair[type];
-
-  const wrap = el("div", { class:"revfix-wrap" });
-  wrap.appendChild(el("div", { class:"small", text:"Dépannage lié à la révision" }));
-
-  const chkId = `revrepair_${type}_enabled`;
-  const chk = el("input", { type:"checkbox", id: chkId });
-  chk.checked = !!data.enabled;
-
-  chk.addEventListener("change", () => {
-  data.enabled = !!chk.checked;
-
-  // afficher / cacher sans re-render global
-  if (data.enabled) {
-    const newBlock = renderRevRepairBlock(type);
-    if (newBlock) {
-      const parent = wrap.parentNode;
-      if (parent) parent.replaceChild(newBlock, wrap);
-    }
-  } else {
-    // juste supprimer la liste si décoché
-    const grid = wrap.querySelector(".revfix-grid");
-    if (grid) grid.remove();
-  }
-
-  updatePreview();
-  saveActiveReportFromUI();
-});
-
-  wrap.appendChild(el("label", { for: chkId }, [
-    chk,
-    el("span", { text:"Activer la liste de dépannage" })
-  ]));
-
-    // si pas activé -> on n'affiche pas la liste
-  if (!data.enabled) return wrap;
-
-  // ✅ catégories (c'est ici que tu ajoutes des choix)
-  const CATS = [
-    { key: "manual", label: "Refixation du détecteur manuel" },
-    { key: "auto",   label: "Refixation du détecteur automatique" },
-    { key: "flash",  label: "Changement du feux-flash" },
-    { key: "replace", label: "Remplacement du PMI" },
-    { key: "other",  label: "Autre" }
-  ];
-
-  if (!Array.isArray(data.items)) data.items = [];
-
-  const grid = el("div", { class:"revfix-grid" });
-  const list = el("div", {});
-  grid.appendChild(list);
-
-  function renderRows() {
-    list.innerHTML = "";
-
-    data.items.forEach((it, idx) => {
-      const line = el("div", { class:"tri-exrow" }); // même style que tes exceptions
-
-      const sel = el("select", {});
-      CATS.forEach(c => sel.appendChild(el("option", { value: c.key, text: c.label })));
-      sel.value = it.cat || CATS[0].key;
-
-      sel.addEventListener("change", (e) => {
-        data.items[idx].cat = e.target.value;
-        updatePreview();
-        saveActiveReportFromUI();
-      });
-
-      const inp = el("input", {
-        type:"text",
-        value: it.text || "",
-        placeholder:"Préciser…"
-      });
-      inp.addEventListener("input", (e) => {
-        data.items[idx].text = e.target.value || "";
-        updatePreview();
-        saveActiveReportFromUI();
-      });
-
-      const del = el("button", { type:"button", text:"✕" });
-      del.addEventListener("click", (e) => {
-        e.stopPropagation();
-        data.items.splice(idx, 1);
-        renderRows();
-        updatePreview();
-        saveActiveReportFromUI();
-      });
-
-      line.appendChild(sel);
-      line.appendChild(inp);
-      line.appendChild(del);
-      list.appendChild(line);
-    });
-
-    const add = el("button", { type:"button", text:"+ Ajouter" });
-    add.style.marginTop = "10px";
-    add.addEventListener("click", (e) => {
-      e.stopPropagation();
-      data.items.push({ cat: CATS[0].key, text: "" });
-      renderRows();
-      updatePreview();
-      saveActiveReportFromUI();
-    });
-    list.appendChild(add);
-  }
-
-  renderRows();
-
-    wrap.appendChild(grid);
-  return wrap;
-} // ✅ fermeture de renderRevRepairBlock
 
 function renderStateGroup(type) {
   const wrap = el("div", { style: "border:1px dashed #ddd; border-radius:10px; padding:10px; margin:8px 0;" });
@@ -965,8 +1089,7 @@ function renderStateGroup(type) {
     input.addEventListener("change", () => {
       getDay().arrivalState[type].state[idx] = !!input.checked;
       normalizeArrivalState(type, idx);
-
-      render();           // important : affiche/masque la zone "dérangements"
+      render();
       updatePreview();
       saveActiveReportFromUI();
     });
@@ -1021,7 +1144,7 @@ function renderDerangementsBox(type) {
   wrap.appendChild(pills);
 
   const row = el("div", { class:"arr-drgt-row" });
-  const input = el("input", { type:"text", class:"arr-drgt-input", placeholder:"Ajouter un dérangement (ex: Ligne 3 : défaut X…)" });
+  const input = el("input", { type:"text", class:"arr-drgt-input", placeholder:"Ajouter un dérangement..." });
   const addBtn = el("button", { type:"button", class:"arr-drgt-btn", text:"➕ Ajouter" });
 
   addBtn.addEventListener("click", () => {
@@ -1060,127 +1183,24 @@ function renderDerangementsBox(type) {
   return wrap;
 }
 
-/***********************
- * Exceptions UI (générique)
- ***********************/
-function buildExceptionsUI(key, helpText) {
-  const wrap = el("div", { class:"tri-exwrap" });
-
-  wrap.appendChild(el("div", { class:"tri-exhead" }, [
-    el("div", { class:"small", text:"Liste (exceptions)" }),
-    el("div", { class:"muted", text: helpText })
-  ]));
-
-  const list = el("div", {});
-  wrap.appendChild(list);
-
-  function renderRows() {
-    list.innerHTML = "";
-    const arr = globalExceptions[key] || [];
-
-    arr.forEach((row, rIdx) => {
-      const line = el("div", { class:"tri-exrow" });
-
-      const inp = el("input", { type:"text", value: row.label || "", placeholder:"Ex: Couloir pharmacie / DM 12" });
-      inp.addEventListener("input", (e) => {
-        globalExceptions[key][rIdx].label = e.target.value;
-        updatePreview(); saveActiveReportFromUI();
-      });
-
-      const sel = el("select", {});
-      DETECTEUR_MOTIFS.forEach(m => sel.appendChild(el("option", { value:m, text:m })));
-      sel.value = row.motif || (row.motifCustom ? "Autre" : DETECTEUR_MOTIFS[0]);
-      sel.addEventListener("change", (e) => {
-  const val = e.target.value;
-  globalExceptions[key][rIdx].motif = val;
-
-  if (val === "Autre") {
-    globalExceptions[key][rIdx].motifCustom = "";
-  } else {
-    delete globalExceptions[key][rIdx].motifCustom;
-  }
-
-  renderRows();
-  updatePreview();
-  saveActiveReportFromUI();
-});
-
-      const del = el("button", { type:"button", text:"✕" });
-      del.addEventListener("click", (e) => {
-        e.stopPropagation();
-        globalExceptions[key].splice(rIdx, 1);
-        renderRows();
-        updatePreview(); saveActiveReportFromUI();
-      });
-
-      line.appendChild(inp);
-      line.appendChild(sel);
-if (row.motif === "Autre") {
-  const customInput = el("input", {
-    type: "text",
-    value: row.motifCustom || "",
-    placeholder: "Préciser le motif..."
-  });
-
-  customInput.addEventListener("input", (e) => {
-    globalExceptions[key][rIdx].motifCustom = e.target.value;
-    updatePreview();
-    saveActiveReportFromUI();
-  });
-
-  line.appendChild(customInput);
-}
-      line.appendChild(del);
-      list.appendChild(line);
-    });
-
-    const add = el("button", { type:"button", text:"+ Ajouter" });
-    add.style.marginTop = "10px";
-    add.addEventListener("click", (e) => {
-      e.stopPropagation();
-      globalExceptions[key].push({ label:"", motif: DETECTEUR_MOTIFS[0] });
-      renderRows();
-      updatePreview(); saveActiveReportFromUI();
-    });
-    list.appendChild(add);
-  }
-
-  renderRows();
-  return wrap;
-}
-
-/***********************
- * TRI ITEM (avec indication déjà fait)
- ***********************/
 function renderTriItem(type, idx, text) {
   const day = getDay();
   initDayStatesIfNeeded(type, day);
   const st = day.states[type][idx];
-  // ✅ Init champ spécial pour plans pompiers
-if (type === "rev" && text === PLAN_POMPIERS_ITEM) {
-  if (!st.planSiemens) st.planSiemens = "—";
-}
 
   const item = el("div", { class:"tri-item neutral" });
   const left = el("div", { class:"tri-left" });
   const badge = el("div", { class:"tri-badge", text:"—" });
-
   const textWrap = el("div", { class:"tri-textwrap" });
   const label = el("div", { class:"tri-text", text });
 
-  let hintEl = null;
-  const prevDay = findPreviouslyDoneDay(type, idx);
-  if (prevDay >= 0) hintEl = el("div", { class:"tri-hint", text:`Déjà fait : Jour ${prevDay+1}` });
-
   textWrap.appendChild(label);
-  if (hintEl) textWrap.appendChild(hintEl);
-
   left.appendChild(badge);
   left.appendChild(textWrap);
 
   const right = el("div", { class:"tri-right" });
-
   const sel = el("select", { class:"tri-reason" });
+
   const reasonsToUse = (REASONS_CUSTOM && REASONS_CUSTOM[text]) ? REASONS_CUSTOM[text] : REASONS;
   reasonsToUse.forEach(r => sel.appendChild(el("option", { value: r, text: r })));
   if (!reasonsToUse.includes(st.reason)) st.reason = reasonsToUse[0];
@@ -1191,71 +1211,23 @@ if (type === "rev" && text === PLAN_POMPIERS_ITEM) {
     updatePreview();
     saveActiveReportFromUI();
   });
+
   right.appendChild(sel);
-  // ✅ Dropdown Siemens uniquement si ✓ (vert) sur plans pompiers
-let planSel = null;
-
-if (type === "rev" && text === PLAN_POMPIERS_ITEM) {
-  planSel = el("select", { style:"display:none; min-width: 260px;" });
-
-  PLAN_POMPIERS_SIEMENS_OPTIONS.forEach(o =>
-    planSel.appendChild(el("option", { value:o, text:o }))
-  );
-
-  const wanted = st.planSiemens || "Tout bon";
-planSel.value = PLAN_POMPIERS_SIEMENS_OPTIONS.includes(wanted) ? wanted : "Tout bon";
-st.planSiemens = planSel.value;
-
-  planSel.addEventListener("change", (e) => {
-    st.planSiemens = e.target.value || "—";
-    updatePreview();
-    saveActiveReportFromUI();
-  });
-
-  right.appendChild(planSel);
-}
-
-  let exUI = null;
-
-  // MR : détecteurs non remplacés
-  if (currentType === "det" && isExceptionsItem(text)) {
-    exUI = buildExceptionsUI("det_exceptions", EXCEPTIONS_HELP);
-    right.appendChild(exUI);
-  }
-
-  // AR : déclencheurs manuels non testés
-  if (currentType === "rev" && text === DM_EXCEPTIONS_ITEM) {
-    exUI = buildExceptionsUI("dm_exceptions", DM_HELP);
-    right.appendChild(exUI);
-  }
-
   item.appendChild(left);
   item.appendChild(right);
 
   function applyUI() {
     item.classList.remove("neutral","done","notdone");
-    if (st.state === 0) { item.classList.add("neutral"); badge.textContent="—"; }
-    else if (st.state === 1) { item.classList.add("done"); badge.textContent="✓"; }
-    else { item.classList.add("notdone"); badge.textContent="✕"; }
-
-    const reasonsNow = (REASONS_CUSTOM && REASONS_CUSTOM[text]) ? REASONS_CUSTOM[text] : REASONS;
-    if (!reasonsNow.includes(st.reason)) st.reason = reasonsNow[0];
-    sel.value = st.reason || reasonsNow[0];
-if (type === "rev" && text === PLAN_POMPIERS_ITEM) {
-  sel.style.display = (st.state === 2) ? "block" : "none"; // raison seulement si ✕
-}
-
-    if (exUI) {
-      const key = (currentType === "det") ? "det_exceptions" : "dm_exceptions";
-      const hasAny = (globalExceptions[key] || []).some(x => (x.label || "").trim());
-      exUI.style.display = (st.state === 1 || st.state === 2 || hasAny) ? "block" : "none";
+    if (st.state === 0) {
+      item.classList.add("neutral");
+      badge.textContent = "—";
+    } else if (st.state === 1) {
+      item.classList.add("done");
+      badge.textContent = "✓";
+    } else {
+      item.classList.add("notdone");
+      badge.textContent = "✕";
     }
-// ✅ Affiche le menu Siemens seulement si l'item est en ✓
-if (planSel) {
-  planSel.style.display = (st.state === 1) ? "block" : "none";
-  // Si tu repasses en — ou ✕, on remet "Tout bon" (optionnel mais propre)
-  if (st.state !== 1) st.planSiemens = "—";
-}
   }
 
   item.addEventListener("click", (e) => {
@@ -1272,13 +1244,12 @@ if (planSel) {
   return item;
 }
 
-/***********************
- * CLOSURE
- ***********************/
+function renderRevRepairBlock(type) {
+  return null;
+}
+
 function renderClosure(type) {
   const departureBlocksEl = document.getElementById("departureBlocks");
-  // IMPORTANT: render() remet déjà innerHTML à vide, donc ici on ne vide pas de nouveau.
-
   const cfg = CLOSURE[type];
   if (!cfg) return;
 
@@ -1302,96 +1273,633 @@ function renderClosure(type) {
   });
 
   departureBlocksEl.appendChild(wrap);
+}
 
-  if (getDay().closureState[type].status !== 1) return;
 
-  if (cfg.reasonsMode === "single") {
-    const sel = el("select", {});
-    cfg.reasons.forEach(r => sel.appendChild(el("option", { value:r, text:r })));
+/***********************
+ * State
+ ***********************/
+let currentType = "rev";
+let days = [];
+let currentDayIndex = 0;
+let globalExceptions = { det_exceptions: [], dm_exceptions: [] };
 
-    if (!cfg.reasons.includes(getDay().closureState[type].reasonSingle)) {
-      getDay().closureState[type].reasonSingle = cfg.reasons[0];
-    }
-    sel.value = getDay().closureState[type].reasonSingle || cfg.reasons[0];
+function defaultDay() {
+  return {
+  dateISO: todayISO(),
+  states: { rev: [], det: [], dep: [], mes: [] },
+  arrivalState: {
+    rev: { state:[true,false,false], mode:0 },
+    det: { state:[true,false,false], mode:0 },
+    dep: { state:[true,false,false], mode:0 },
+    mes: { state:[true,false,false], mode:0 }
+  },
+  arrivalDrgts: {
+    rev: { selected:[], custom:[] },
+    det: { selected:[], custom:[] },
+    dep: { selected:[], custom:[] },
+    mes: { selected:[], custom:[] }
+  },
+  closureState: {
+    rev: { status:0, reasons:[], reasonSingle:"", other:"" },
+    det: { status:0, reasons:[], reasonSingle:"", other:"" },
+    dep: { status:0, reasons:[], reasonSingle:"", other:"" },
+    mes: { status:0, reasons:[], reasonSingle:"", other:"" }
+  },
 
-    sel.addEventListener("change", () => {
-      getDay().closureState[type].reasonSingle = sel.value;
-      updatePreview();
-      saveActiveReportFromUI();
-    });
+  revRepair: {
+    rev: { enabled:false, items: [] },
+    det: { enabled:false, items: [] }
+  },
 
-    departureBlocksEl.appendChild(sel);
-    return;
+  mesData: {
+  intervention: "extension",
+  state: "service",
+  mode: "direct",
+  faultPills: [],
+  customFault: "",
+  security: {
+    cta: true,
+    certas: true,
+    client: true
+  },
+  blocks: {
+    general: false,
+    da: false,
+    dm: false,
+    ass: false,
+    flash: false,
+    sirene: false,
+    trans: false
+  },
+  daTypes: ["Ponctuels"],
+  rows: {},
+  reserves: "",
+  actionsRestantes: "",
+  end: "ok",
+  previewText: "",
+  previewLocked: false
+}
+};
+}
+function getDay() { return days[currentDayIndex]; }
+
+function getMES() {
+  const day = getDay();
+
+  if (!day.mesData) day.mesData = {};
+
+  const mes = day.mesData;
+
+  if (!mes.intervention) mes.intervention = "extension";
+  if (!mes.state) mes.state = "service";
+  if (!mes.mode) mes.mode = "direct";
+  if (!Array.isArray(mes.faultPills)) mes.faultPills = [];
+  if (typeof mes.customFault !== "string") mes.customFault = "";
+
+  if (!mes.security) mes.security = {};
+  if (typeof mes.security.cta !== "boolean") mes.security.cta = true;
+  if (typeof mes.security.certas !== "boolean") mes.security.certas = true;
+  if (typeof mes.security.client !== "boolean") mes.security.client = true;
+
+  if (!mes.blocks) mes.blocks = {};
+  if (typeof mes.blocks.general !== "boolean") mes.blocks.general = false;
+  if (typeof mes.blocks.da !== "boolean") mes.blocks.da = false;
+  if (typeof mes.blocks.dm !== "boolean") mes.blocks.dm = false;
+  if (typeof mes.blocks.ass !== "boolean") mes.blocks.ass = false;
+  if (typeof mes.blocks.flash !== "boolean") mes.blocks.flash = false;
+  if (typeof mes.blocks.sirene !== "boolean") mes.blocks.sirene = false;
+  if (typeof mes.blocks.trans !== "boolean") mes.blocks.trans = false;
+
+  if (!Array.isArray(mes.daTypes)) mes.daTypes = ["Ponctuels"];
+  if (!mes.rows) mes.rows = {};
+  if (typeof mes.reserves !== "string") mes.reserves = "";
+  if (typeof mes.actionsRestantes !== "string") mes.actionsRestantes = "";
+  if (!mes.end) mes.end = "ok";
+  if (typeof mes.previewText !== "string") mes.previewText = "";
+  if (typeof mes.previewLocked !== "boolean") mes.previewLocked = false;
+
+  return mes;
+}
+
+const MES_REASONS = ["Accès impossible", "Matériel manquant", "À finaliser", "Non concerné"];
+
+const MES_ROW_DEFS = {
+  general: [
+    ["general_centrale","Pose / raccordement de la centrale"],
+    ["general_tr","Pose / raccordement des tableaux de rappel"],
+    ["general_prog","Pose / programmation de la centrale"],
+    ["general_lignes","Lecture des lignes"]
+  ],
+  da: [
+    ["da_line","Lecture de la ligne au FDUL"],
+    ["da_param","Programmation et paramétrage des détecteurs"],
+    ["da_load","Chargement de la centrale"],
+    ["da_test","Tests fonctionnels"]
+  ],
+  dm: [
+    ["dm_pose","Pose / raccordement des déclencheurs manuels par électricien"],
+    ["da_line","Lecture de la ligne au FDUL"],
+    ["dm_prog","Programmation des nouveaux appareils"],
+    ["dm_test","Test de tous les déclencheurs manuels"]
+  ],
+  ass: [
+    ["ass_ctrl","Rajout / Câblage du FDCIO par électricien"],
+    ["ass_test","Lecture de la ligne au FDUL"],
+    ["ass_test","Programmation des nouveaux appareils selon la grille d’asservissement"],
+    ["ass_scen","Test de tous les nouveaux asservissements"]
+  ],
+  flash: [
+    ["flash_pose","Pose / raccordement des feux flash"],
+    ["flash_prog","Programmation des nouveaux appareils"],
+    ["flash_test","Test des feux flash"]
+  ],
+  sirene: [
+    ["sir_pose","Pose / raccordement des sirènes"],
+    ["sir_prog","Programmation des nouveaux appareils"],
+    ["sir_test","Test des sirènes"]
+  ],
+  trans: [
+    ["trans_cta","Programmation du télétransmetteur selon la grille des critères"],
+    ["trans_certas","Chargement du télétransmetteur avec nouveaux paramètres"],
+    ["trans_ctrl","Contrôle des transmissions"]
+  ]
+};
+
+function ensureMESRows() {
+  const mes = getMES();
+  if (!mes.rows) mes.rows = {};
+  Object.values(MES_ROW_DEFS).flat().forEach(([key]) => {
+    if (!mes.rows[key]) mes.rows[key] = { state: 0, reason: MES_REASONS[0] };
+  });
+}
+
+function mesSetSingle(key, value) {
+  const mes = getMES();
+  mes[key] = value;
+  renderMES();
+  updatePreview();
+  saveActiveReportFromUI();
+}
+
+function mesToggleSecurity(key) {
+  const mes = getMES();
+  mes.security[key] = !mes.security[key];
+  renderMES();
+  updatePreview();
+  saveActiveReportFromUI();
+}
+
+function mesToggleBlock(key) {
+  const mes = getMES();
+  mes.blocks[key] = !mes.blocks[key];
+  renderMES();
+  updatePreview();
+  saveActiveReportFromUI();
+}
+
+function mesToggleFaultPill(label) {
+  const mes = getMES();
+  const i = mes.faultPills.indexOf(label);
+  if (i >= 0) mes.faultPills.splice(i, 1);
+  else mes.faultPills.push(label);
+  renderMES();
+  updatePreview();
+  saveActiveReportFromUI();
+}
+
+function mesToggleDAType(label) {
+  const mes = getMES();
+  const i = mes.daTypes.indexOf(label);
+  if (i >= 0) mes.daTypes.splice(i, 1);
+  else mes.daTypes.push(label);
+  renderMES();
+  updatePreview();
+  saveActiveReportFromUI();
+}
+
+function mesCycleRow(key) {
+  const mes = getMES();
+  ensureMESRows();
+  mes.rows[key].state = (mes.rows[key].state + 1) % 3;
+  renderMES();
+  updatePreview();
+  saveActiveReportFromUI();
+}
+
+function mesSetRowReason(key, value) {
+  const mes = getMES();
+  ensureMESRows();
+  mes.rows[key].reason = value;
+  updatePreview();
+  saveActiveReportFromUI();
+}
+
+function mesApplyBlocksVisibilityInDOM() {
+  const mes = getMES();
+  const isNew = mes.intervention === "new";
+
+  const arrivalCard = document.getElementById("mesArrivalCard");
+  const securityCard = document.getElementById("mesSecurityCard");
+  const faultBox = document.getElementById("mesFaultBox");
+  const generalToggle = document.getElementById("mesToggleGeneral");
+  const blockGeneral = document.getElementById("mesBlockGeneral");
+
+  if (arrivalCard) arrivalCard.classList.toggle("mes-hidden", isNew);
+  if (securityCard) securityCard.classList.toggle("mes-hidden", isNew);
+
+  if (generalToggle) generalToggle.classList.toggle("mes-hidden", !isNew);
+if (blockGeneral) {
+  if (!isNew) {
+    mes.blocks.general = false;
+    blockGeneral.classList.add("mes-hidden");
+  } else {
+    blockGeneral.classList.toggle("mes-hidden", !mes.blocks.general);
   }
+}
 
-  const box = el("div", { class:"closure-box" });
-  box.appendChild(el("div", { class:"small", text:"Motifs (multi-sélection) :" }));
+  if (faultBox) faultBox.classList.toggle("mes-hidden", mes.state !== "fault");
 
-  cfg.reasons.forEach(reason => {
-    const key = reason.replace(/\W+/g,"_");
-    const id = `closure_${type}_chk_${key}`;
-    const input = el("input", { type:"checkbox", id });
-    input.checked = (getDay().closureState[type].reasons || []).includes(reason);
+  const map = {
+    da: "mesBlockDa",
+    dm: "mesBlockDm",
+    ass: "mesBlockAss",
+    flash: "mesBlockFlash",
+    sirene: "mesBlockSirene",
+    trans: "mesBlockTrans"
+  };
 
-    input.addEventListener("change", () => {
-      const arr = getDay().closureState[type].reasons;
-      const i = arr.indexOf(reason);
-      if (input.checked && i < 0) arr.push(reason);
-      if (!input.checked && i >= 0) arr.splice(i,1);
-      updatePreview();
-      saveActiveReportFromUI();
+  Object.entries(map).forEach(([key, id]) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle("mes-hidden", !mes.blocks[key]);
+  });
+}
+
+function mesRowHTML(key, label) {
+  const mes = getMES();
+  ensureMESRows();
+  const row = mes.rows[key];
+  const cls = row.state === 1 ? "done" : row.state === 2 ? "notdone" : "neutral";
+  const badge = row.state === 1 ? "✓" : row.state === 2 ? "✕" : "—";
+
+  return `
+    <div class="mes-control-item ${cls}" data-key="${key}">
+      <div class="mes-control-main">
+        <div class="mes-tri-badge">${badge}</div>
+        <div style="flex:1">
+          <div style="font-weight:600">${label}</div>
+          <div class="mes-muted">Clic = — → ✓ → ✕ → —</div>
+          <div class="mes-reason ${row.state === 2 ? 'show' : ''}">
+            <select class="mes-select" data-mes-reason="${key}">
+              ${MES_REASONS.map(r => `<option value="${r}" ${row.reason === r ? "selected" : ""}>${r}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function mesSectionRows(blockKey) {
+  return MES_ROW_DEFS[blockKey].map(([key, label]) => mesRowHTML(key, label)).join("");
+}
+
+function mesLabelIntervention(v) {
+  return v === "new" ? "Nouvelle installation" : "Extension d’installation";
+}
+function mesLabelState(v) {
+  if (v === "zones") return "À mon arrivée, la centrale présente des zones hors service";
+  if (v === "fault") return "À mon arrivée, la centrale présente des dérangements";
+  return "À mon arrivée, la centrale est en service";
+}
+function mesLabelMode(v) {
+  return v === "differe"
+    ? "À mon arrivée, la centrale est en mode différé"
+    : "À mon arrivée, la centrale est en mode direct";
+}
+function mesLabelEnd(v) {
+  if (v === "partial") return "La mise en service est partielle. Des réserves restent à lever.";
+  if (v === "ko") return "La mise en service n’a pas pu être finalisée.";
+  return "La mise en service s’est déroulée correctement. L’installation est opérationnelle.";
+}
+
+function renderMES() {
+  const mes = getMES();
+  ensureMESRows();
+
+  const faultOptions = [
+    "Ligne ouverte",
+    "Court-circuit",
+    "Défaut alimentation",
+    "Défaut batterie",
+    "Détecteur en dérangement",
+    "Transmission en défaut"
+  ];
+
+  const daTypeOptions = ["Ponctuels", "Linéaires", "Flamme", "Chaleur", "Aspirants", "EX"];
+
+  const box = document.getElementById("mesContainer");
+
+  box.innerHTML = `
+  <div class="mes-app">
+    <div class="mes-stack">
+        <div class="mes-card">
+          <h2>1. Type d’intervention</h2>
+          <div class="mes-switches">
+            <div class="mes-chip ${mes.intervention === "extension" ? "active" : ""}" data-mes-single="intervention" data-value="extension">Extension d’installation</div>
+            <div class="mes-chip ${mes.intervention === "new" ? "active" : ""}" data-mes-single="intervention" data-value="new">Nouvelle installation</div>
+          </div>
+        </div>
+
+        <div class="mes-card" id="mesArrivalCard">
+          <h2>2. État à l’arrivée</h2>
+
+          <div class="mes-section soft">
+            <h3>État de la centrale</h3>
+            <div class="mes-switches">
+              <div class="mes-chip ${mes.state === "service" ? "active" : ""}" data-mes-single="state" data-value="service">À mon arrivée, la centrale est en service</div>
+              <div class="mes-chip ${mes.state === "zones" ? "active" : ""}" data-mes-single="state" data-value="zones">À mon arrivée, la centrale présente des zones hors service</div>
+              <div class="mes-chip ${mes.state === "fault" ? "active" : ""}" data-mes-single="state" data-value="fault">À mon arrivée, la centrale présente des dérangements</div>
+            </div>
+          </div>
+
+          <div class="mes-section soft" style="margin-top:12px">
+            <h3>Mode d’exploitation</h3>
+            <div class="mes-switches">
+              <div class="mes-chip ${mes.mode === "direct" ? "active" : ""}" data-mes-single="mode" data-value="direct">À mon arrivée, la centrale est en mode direct</div>
+              <div class="mes-chip ${mes.mode === "differe" ? "active" : ""}" data-mes-single="mode" data-value="differe">À mon arrivée, la centrale est en mode différé</div>
+            </div>
+          </div>
+
+          <div class="mes-section soft mes-hidden" id="mesFaultBox" style="margin-top:12px">
+            <h3>Dérangements à l’arrivée</h3>
+            <div class="mes-switches">
+              ${faultOptions.map(x => `
+                <div class="mes-chip ${mes.faultPills.includes(x) ? "active" : ""}" data-mes-fault="${x}">${x}</div>
+              `).join("")}
+            </div>
+            <div class="mes-subsection">
+              <div class="mes-muted" style="margin-bottom:8px">Ajout libre</div>
+              <input id="mesCustomFault" class="mes-input" type="text" placeholder="Ex: ancien défaut non traité" value="${mes.customFault || ""}" />
+            </div>
+          </div>
+        </div>
+
+        <div class="mes-card" id="mesSecurityCard">
+          <h2>3. Sécurité d’exploitation</h2>
+          <div style="display:grid;gap:10px">
+            <div class="mes-toggle ${mes.security.cta ? "active" : ""}" data-mes-toggle-security="cta">
+              <span>Mise en test du CTA</span><span class="mes-badge ${mes.security.cta ? "is-on" : ""}">${mes.security.cta ? "activé" : "désactivé"}</span>
+            </div>
+            <div class="mes-toggle ${mes.security.certas ? "active" : ""}" data-mes-toggle-security="certas">
+              <span>Mise en test de Certas</span><span class="mes-badge ${mes.security.certas ? "is-on" : ""}">${mes.security.certas ? "activé" : "désactivé"}</span>
+            </div>
+            <div class="mes-toggle ${mes.security.client ? "active" : ""}" data-mes-toggle-security="client">
+              <span>Information au client : sécurité absente ou affaiblie durant notre présence sur site</span><span class="mes-badge ${mes.security.client ? "is-on" : ""}">${mes.security.client ? "activé" : "désactivé"}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mes-card">
+          <h2>4. Blocs à mettre en service</h2>
+          <div class="mes-muted" style="margin-bottom:10px">Tout est OFF par défaut. Tu actives uniquement ce qui concerne le chantier.</div>
+
+          <div class="mes-grid2">
+            <div class="mes-toggle ${mes.blocks.general ? "active" : ""}" data-mes-toggle-block="general" id="mesToggleGeneral">
+              <span>Mise en service générale</span><span class="mes-badge ${mes.blocks.general ? "is-on" : ""}">${mes.blocks.general ? "ON" : "OFF"}</span>
+            </div>
+            <div class="mes-toggle ${mes.blocks.da ? "active" : ""}" data-mes-toggle-block="da">
+              <span>Détecteurs automatiques</span><span class="mes-badge ${mes.blocks.da ? "is-on" : ""}">${mes.blocks.da ? "ON" : "OFF"}</span>
+            </div>
+            <div class="mes-toggle ${mes.blocks.dm ? "active" : ""}" data-mes-toggle-block="dm">
+              <span>Déclencheurs manuels</span><span class="mes-badge ${mes.blocks.dm ? "is-on" : ""}">${mes.blocks.dm ? "ON" : "OFF"}</span>
+            </div>
+            <div class="mes-toggle ${mes.blocks.ass ? "active" : ""}" data-mes-toggle-block="ass">
+              <span>Asservissements</span><span class="mes-badge ${mes.blocks.ass ? "is-on" : ""}">${mes.blocks.ass ? "ON" : "OFF"}</span>
+            </div>
+            <div class="mes-toggle ${mes.blocks.flash ? "active" : ""}" data-mes-toggle-block="flash">
+              <span>Feux flash</span><span class="mes-badge ${mes.blocks.flash ? "is-on" : ""}">${mes.blocks.flash ? "ON" : "OFF"}</span>
+            </div>
+            <div class="mes-toggle ${mes.blocks.sirene ? "active" : ""}" data-mes-toggle-block="sirene">
+              <span>Sirènes</span><span class="mes-badge ${mes.blocks.sirene ? "is-on" : ""}">${mes.blocks.sirene ? "ON" : "OFF"}</span>
+            </div>
+            <div class="mes-toggle ${mes.blocks.trans ? "active" : ""}" data-mes-toggle-block="trans">
+              <span>Transmission</span><span class="mes-badge ${mes.blocks.trans ? "is-on" : ""}">${mes.blocks.trans ? "ON" : "OFF"}</span>
+            </div>
+          </div>
+
+          <div class="mes-stack" style="margin-top:14px">
+            <div class="mes-section mes-hidden" id="mesBlockGeneral">
+              <h3>Mise en service générale</h3>
+              ${mesSectionRows("general")}
+            </div>
+
+            <div class="mes-section mes-hidden" id="mesBlockDa">
+              <h3>Mise en service détecteurs automatiques</h3>
+              <div class="mes-muted" style="margin-bottom:8px">Familles activables :</div>
+              <div class="mes-switches">
+                ${daTypeOptions.map(x => `
+                  <div class="mes-chip ${mes.daTypes.includes(x) ? "active" : ""}" data-mes-datype="${x}">${x}</div>
+                `).join("")}
+              </div>
+              <div class="mes-subsection">
+                ${mesSectionRows("da")}
+              </div>
+            </div>
+
+            <div class="mes-section mes-hidden" id="mesBlockDm">
+              <h3>Mise en service déclencheurs manuels</h3>
+              ${mesSectionRows("dm")}
+            </div>
+
+            <div class="mes-section mes-hidden" id="mesBlockAss">
+              <h3>Mise en service asservissements</h3>
+              ${mesSectionRows("ass")}
+            </div>
+
+            <div class="mes-section mes-hidden" id="mesBlockFlash">
+              <h3>Mise en service feux flash</h3>
+              ${mesSectionRows("flash")}
+            </div>
+
+            <div class="mes-section mes-hidden" id="mesBlockSirene">
+              <h3>Mise en service sirènes</h3>
+              ${mesSectionRows("sirene")}
+            </div>
+
+            <div class="mes-section mes-hidden" id="mesBlockTrans">
+              <h3>Mise en service transmission</h3>
+              ${mesSectionRows("trans")}
+            </div>
+          </div>
+        </div>
+
+        <div class="mes-card">
+          <h2>5. Réserves / remarques</h2>
+          <div class="mes-grid2">
+            <div>
+              <div class="mes-muted" style="margin-bottom:8px">Éléments non finalisés</div>
+              <textarea id="mesReserves" class="mes-textarea" placeholder="Ex: 2 détecteurs linéaires non testés faute de nacelle.">${mes.reserves || ""}</textarea>
+            </div>
+            <div>
+              <div class="mes-muted" style="margin-bottom:8px">Actions restantes / client</div>
+              <textarea id="mesActionsRestantes" class="mes-textarea" placeholder="Ex: remise des plans corrigés, validation client, finitions électriques.">${mes.actionsRestantes || ""}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="mes-card">
+          <h2>6. Constat de fin</h2>
+          <div class="mes-switches">
+            <div class="mes-chip ${mes.end === "ok" ? "active" : ""}" data-mes-single="end" data-value="ok">La mise en service s’est déroulée correctement. L’installation est opérationnelle.</div>
+            <div class="mes-chip ${mes.end === "partial" ? "active" : ""}" data-mes-single="end" data-value="partial">La mise en service est partielle. Des réserves restent à lever.</div>
+            <div class="mes-chip ${mes.end === "ko" ? "active" : ""}" data-mes-single="end" data-value="ko">La mise en service n’a pas pu être finalisée.</div>
+          </div>
+        </div>
+
+        <div class="mes-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div>
+              <h2 style="margin-bottom:4px">Prévisualisation du rapport</h2>
+              <div class="mes-muted">Modifiable à la main, et ta version reste conservée tant que tu ne régénères pas.</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button id="mesCopyBtn" class="mes-smallbtn" type="button">📋 Copier</button>
+  <button id="mesEditBtn" class="mes-smallbtn" type="button">✏️ Modifier</button>
+  <button id="mesRegenBtn" class="mes-smallbtn" type="button">🔄 Régénérer</button>
+</div>
+          </div>
+          <textarea id="mesPreviewText" class="mes-textarea" style="margin-top:12px; min-height:380px; white-space:pre-wrap; background:#000000; color:#ffffff; font-family:ui-monospace, SFMono-Regular, Consolas, monospace; line-height:1.45;" ${mes.previewLocked ? "" : "readonly"}>${mes.previewText || ""}</textarea>
+          <div class="mes-footer-note">Ici l’aperçu est en bas, comme dans ton app actuelle.</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  mesApplyBlocksVisibilityInDOM();
+
+  document.querySelectorAll("[data-mes-single]").forEach(el => {
+    el.addEventListener("click", () => {
+      mesSetSingle(el.dataset.mesSingle, el.dataset.value);
     });
-
-    box.appendChild(el("label", { for:id }, [input, el("span", { text: reason })]));
   });
 
-  const other = el("input", { type:"text", placeholder:"Autre (préciser)…", value: getDay().closureState[type].other || "" });
-  other.style.width = "100%";
-  other.style.marginTop = "8px";
-  other.addEventListener("input", () => {
-    getDay().closureState[type].other = other.value || "";
+  document.querySelectorAll("[data-mes-toggle-security]").forEach(el => {
+    el.addEventListener("click", () => {
+      mesToggleSecurity(el.dataset.mesToggleSecurity);
+    });
+  });
+
+  document.querySelectorAll("[data-mes-toggle-block]").forEach(el => {
+    el.addEventListener("click", () => {
+      mesToggleBlock(el.dataset.mesToggleBlock);
+    });
+  });
+
+  document.querySelectorAll("[data-mes-fault]").forEach(el => {
+    el.addEventListener("click", () => {
+      mesToggleFaultPill(el.dataset.mesFault);
+    });
+  });
+
+  document.querySelectorAll("[data-mes-datype]").forEach(el => {
+    el.addEventListener("click", () => {
+      mesToggleDAType(el.dataset.mesDatype);
+    });
+  });
+
+  document.querySelectorAll(".mes-control-item").forEach(row => {
+    row.addEventListener("click", (e) => {
+      if (e.target.tagName === "SELECT" || e.target.tagName === "OPTION") return;
+      mesCycleRow(row.dataset.key);
+    });
+  });
+
+  document.querySelectorAll("[data-mes-reason]").forEach(sel => {
+    sel.addEventListener("change", (e) => {
+      e.stopPropagation();
+      mesSetRowReason(sel.dataset.mesReason, sel.value);
+    });
+    sel.addEventListener("click", (e) => e.stopPropagation());
+  });
+
+
+  const customFault = document.getElementById("mesCustomFault");
+  if (customFault) {
+    customFault.addEventListener("input", (e) => {
+      mes.customFault = e.target.value || "";
+      updatePreview();
+      saveActiveReportFromUI();
+    });
+  }
+
+  document.getElementById("mesReserves").addEventListener("input", (e) => {
+    mes.reserves = e.target.value || "";
     updatePreview();
     saveActiveReportFromUI();
   });
 
-  box.appendChild(other);
-  departureBlocksEl.appendChild(box);
-}
-
-/***********************
- * Render + Preview
- ***********************/
-function updateDaySelect() {
-  const sel = document.getElementById("daySelect");
-  sel.innerHTML = "";
-  days.forEach((d, i) => {
-    const opt = document.createElement("option");
-    opt.value = String(i);
-    const dmy = formatDMYFromISO(d.dateISO || parseDMYToISO(d.date || ""));
-    opt.textContent = `Jour ${i+1}${dmy ? " — " + dmy : ""}`;
-    sel.appendChild(opt);
+  document.getElementById("mesActionsRestantes").addEventListener("input", (e) => {
+    mes.actionsRestantes = e.target.value || "";
+    updatePreview();
+    saveActiveReportFromUI();
   });
-  sel.value = String(currentDayIndex);
-}
 
-function setDayLabel() {
-  const d = getDay();
-  const label = document.getElementById("dayLabel");
-  const n = currentDayIndex + 1;
-  const dmy = formatDMYFromISO(d.dateISO || parseDMYToISO(d.date || ""));
-  const dt = dmy ? ` — Date : ${dmy}` : "";
-  label.textContent = `Jour actif : Jour ${n}${dt}`;
+
+  const mesPreview = document.getElementById("mesPreviewText");
+  mesPreview.addEventListener("input", () => {
+    mes.previewLocked = true;
+    mes.previewText = mesPreview.value || "";
+    document.getElementById("preview").value = mes.previewText || "";
+    saveActiveReportFromUI();
+  });
+
+  document.getElementById("mesEditBtn").addEventListener("click", () => {
+    mes.previewLocked = true;
+    renderMES();
+    const p = document.getElementById("mesPreviewText");
+    p.removeAttribute("readonly");
+    p.classList.add("mes-editing");
+    p.focus();
+    saveActiveReportFromUI();
+  });
+
+    document.getElementById("mesCopyBtn").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(document.getElementById("mesPreviewText").value || "");
+      status("Rapport mise en service copié ✅");
+    } catch {
+      const p = document.getElementById("mesPreviewText");
+      p.focus();
+      p.select();
+      status("Sélectionné (Ctrl+C) ⚠️");
+    }
+  });
+
+    document.getElementById("mesRegenBtn").addEventListener("click", () => {
+    mes.previewLocked = false;
+    mes.previewText = "";
+      setTimeout(() => updatePreview(true), 0);
+    renderMES();
+    saveActiveReportFromUI();
+  });
+
+  updatePreview(true);
 }
 
 function render() {
   const actionsListEl = document.getElementById("actionsList");
   const arrivalBlocksEl = document.getElementById("arrivalBlocks");
   const departureBlocksEl = document.getElementById("departureBlocks");
+  const mesContainerEl = document.getElementById("mesContainer");
+  const departureCardEl = document.getElementById("departureCard");
+  const finalReportCardEl = document.getElementById("finalReportCard");
+  const gridEl = document.querySelector(".grid");
+  const arrivalCardEl = document.getElementById("arrivalCard");
 
   updateDaySelect();
   setDayLabel();
 
-  // on injecte une valeur ISO dans le date picker
   const iso = getDay().dateISO || parseDMYToISO(getDay().date || "") || todayISO();
   getDay().dateISO = iso;
   document.getElementById("dayDate").value = iso;
@@ -1400,18 +1908,45 @@ function render() {
   arrivalBlocksEl.innerHTML = "";
   departureBlocksEl.innerHTML = "";
 
-  // assure la présence du bloc AR/MR dépannage
+    if (currentType === "mes") {
+    document.getElementById("tab-rev").classList.toggle("active", false);
+    document.getElementById("tab-det").classList.toggle("active", false);
+    document.getElementById("tab-dep").classList.toggle("active", false);
+    document.getElementById("tab-mes").classList.toggle("active", true);
+
+    if (gridEl) gridEl.style.display = "none";
+    if (departureCardEl) departureCardEl.style.display = "none";
+    if (finalReportCardEl) finalReportCardEl.style.display = "none";
+    if (mesContainerEl) mesContainerEl.style.display = "block";
+    if (arrivalCardEl) arrivalCardEl.style.display = "none";
+
+    arrivalBlocksEl.innerHTML = "";
+    renderMES();
+    updatePreview(true);
+    return;
+  }
+
+  if (gridEl) gridEl.style.display = "";
+  if (departureCardEl) departureCardEl.style.display = "block";
+  if (arrivalCardEl) arrivalCardEl.style.display = "block";
+  if (finalReportCardEl) finalReportCardEl.style.display = "block";
+  if (mesContainerEl) {
+    mesContainerEl.style.display = "none";
+    mesContainerEl.innerHTML = "";
+  }
+
   ensureRevRepair(getDay());
 
   arrivalBlocksEl.appendChild(renderStateGroup(currentType));
-  if (getDay().arrivalState[currentType].state[2]) arrivalBlocksEl.appendChild(renderDerangementsBox(currentType));
+  if (getDay().arrivalState[currentType].state[2]) {
+    arrivalBlocksEl.appendChild(renderDerangementsBox(currentType));
+  }
   arrivalBlocksEl.appendChild(renderRadioGroup(currentType));
 
   const cfg = TYPES[currentType];
   initDayStatesIfNeeded(currentType, getDay());
   cfg.items.forEach((txt, idx) => actionsListEl.appendChild(renderTriItem(currentType, idx, txt)));
 
-  // ✅ Dépannage lié à la révision (AR/MR) juste avant le constat de fin
   const rr = renderRevRepairBlock(currentType);
   if (rr) departureBlocksEl.appendChild(rr);
 
@@ -1420,8 +1955,9 @@ function render() {
   document.getElementById("tab-rev").classList.toggle("active", currentType === "rev");
   document.getElementById("tab-det").classList.toggle("active", currentType === "det");
   document.getElementById("tab-dep").classList.toggle("active", currentType === "dep");
+  document.getElementById("tab-mes").classList.toggle("active", currentType === "mes");
 
-  updatePreview();
+  updatePreview(true);
 }
 
 function dayBlockToLines(type, day, dayNumber) {
@@ -1529,10 +2065,111 @@ function dayBlockToLines(type, day, dayNumber) {
   return lines;
 }
 
-function updatePreview() {
+function updatePreview(force = false) {
   const previewEl = document.getElementById("preview");
-  const cfg = TYPES[currentType];
 
+  if (currentType === "mes") {
+    const mes = getMES();
+    ensureMESRows();
+
+    if (mes.previewLocked && !force) {
+      previewEl.value = mes.previewText || "";
+      const mesPreview = document.getElementById("mesPreviewText");
+      if (mesPreview && mesPreview.value !== (mes.previewText || "")) {
+        mesPreview.value = mes.previewText || "";
+      }
+      return;
+    }
+
+    function rowsToLines(title, blockKey, enabled) {
+      if (!enabled) return [];
+      const defs = MES_ROW_DEFS[blockKey] || [];
+      const yes = defs.filter(([key]) => mes.rows[key]?.state === 1);
+      const no = defs.filter(([key]) => mes.rows[key]?.state === 2);
+
+      const out = [title];
+      if (yes.length) yes.forEach(([, label]) => out.push(`- ${label}`));
+      else out.push("- (aucun élément validé)");
+
+      if (no.length) {
+        out.push("");
+        out.push("NON RÉALISÉ :");
+        no.forEach(([key, label]) => out.push(`- ${label} — Raison : ${mes.rows[key].reason}`));
+      }
+      out.push("");
+      return out;
+    }
+
+    const lines = [];
+    lines.push("MISE EN SERVICE");
+    lines.push("");
+    lines.push(`RAPPORT : ${document.getElementById("reportSelect").selectedOptions[0]?.textContent || "Sans nom"}`);
+    lines.push(`JOUR : ${document.getElementById("daySelect").selectedOptions[0]?.textContent || "Jour 1"}`);
+    lines.push(`DATE : ${formatDMYFromISO(getDay().dateISO || "")}`);
+    lines.push(`TYPE D’INTERVENTION : ${mesLabelIntervention(mes.intervention)}`);
+    lines.push("");
+
+    if (mes.intervention !== "new") {
+      lines.push("ÉTAT À L’ARRIVÉE :");
+      lines.push(`- ${mesLabelState(mes.state)}`);
+      lines.push(`- ${mesLabelMode(mes.mode)}`);
+
+      if (mes.state === "fault") {
+        if (mes.faultPills.length || (mes.customFault || "").trim()) {
+          lines.push("");
+          lines.push("DÉRANGEMENTS À L’ARRIVÉE :");
+          mes.faultPills.forEach(x => lines.push(`- ${x}`));
+          if ((mes.customFault || "").trim()) lines.push(`- ${mes.customFault.trim()}`);
+        }
+      }
+      lines.push("");
+    }
+
+    lines.push("SÉCURITÉ D’EXPLOITATION :");
+    const toggles = [];
+    if (mes.security.cta) toggles.push("Mise en test du CTA");
+    if (mes.security.certas) toggles.push("Mise en test de Certas");
+    if (mes.security.client) toggles.push("Information au client : sécurité absente ou affaiblie durant notre présence sur site");
+    if (toggles.length) toggles.forEach(x => lines.push(`- ${x}`));
+    else lines.push("- Aucun point activé");
+    lines.push("");
+
+    if (mes.intervention === "new") lines.push(...rowsToLines("MISE EN SERVICE GÉNÉRALE :", "general", mes.blocks.general));
+
+    if (mes.blocks.da) {
+      lines.push("DÉTECTEURS AUTOMATIQUES CONCERNÉS :");
+      lines.push(`- ${mes.daTypes.length ? mes.daTypes.join(", ") : "Aucun type sélectionné"}`);
+      lines.push("");
+      lines.push(...rowsToLines("MISE EN SERVICE DÉTECTEURS AUTOMATIQUES :", "da", true));
+    }
+
+    lines.push(...rowsToLines("MISE EN SERVICE DÉCLENCHEURS MANUELS :", "dm", mes.blocks.dm));
+    lines.push(...rowsToLines("MISE EN SERVICE ASSERVISSEMENTS :", "ass", mes.blocks.ass));
+    lines.push(...rowsToLines("MISE EN SERVICE FEUX FLASH :", "flash", mes.blocks.flash));
+    lines.push(...rowsToLines("MISE EN SERVICE SIRÈNES :", "sirene", mes.blocks.sirene));
+    lines.push(...rowsToLines("MISE EN SERVICE TRANSMISSION :", "trans", mes.blocks.trans));
+
+    if ((mes.reserves || "").trim() || (mes.actionsRestantes || "").trim()) {
+      lines.push("RÉSERVES / REMARQUES :");
+      if ((mes.reserves || "").trim()) lines.push(`- Réserves : ${mes.reserves.trim().replace(/\n/g, " / ")}`);
+      if ((mes.actionsRestantes || "").trim()) lines.push(`- Actions restantes : ${mes.actionsRestantes.trim().replace(/\n/g, " / ")}`);
+      lines.push("");
+    }
+
+    lines.push("CONSTAT DE FIN :");
+    lines.push(`- ${mesLabelEnd(mes.end)}`);
+
+        const text = lines.join("\n").trim() || "Aucun contenu généré pour le moment.";
+    mes.previewText = text;
+    previewEl.value = text;
+
+    const mesPreview = document.getElementById("mesPreviewText");
+    if (mesPreview && mesPreview.value !== text) mesPreview.value = text;
+
+    saveActiveReportFromUI();
+    return;
+  }
+  const cfg = TYPES[currentType];
   const lines = [];
   lines.push(cfg.title);
   lines.push("");
@@ -1543,15 +2180,14 @@ function updatePreview() {
     lines.push(...dayBlockToLines(currentType, d, i+1));
   });
 
-  // MR: détecteurs non remplacés (global)
   if (currentType === "det") {
-  const ex = (globalExceptions.det_exceptions || [])
-    .map(x => ({
-      label: (x.label || "").trim(),
-      motif: x.motif === "Autre"
-        ? (x.motifCustom || "Autre")
-        : (x.motif || DETECTEUR_MOTIFS[0])
-    }))
+    const ex = (globalExceptions.det_exceptions || [])
+      .map(x => ({
+        label: (x.label || "").trim(),
+        motif: x.motif === "Autre"
+          ? (x.motifCustom || "Autre")
+          : (x.motif || DETECTEUR_MOTIFS[0])
+      }))
       .filter(x => x.label);
 
     if (ex.length) {
@@ -1561,12 +2197,14 @@ function updatePreview() {
     }
   }
 
-  // AR: déclencheurs manuels non testés (global)
   if (currentType === "rev") {
     const ex = (globalExceptions.dm_exceptions || [])
-      .map(x => ({ label:(x.label||"").trim(), motif: x.motif === "Autre"
-  ? (x.motifCustom || "Autre")
-  : (x.motif || DETECTEUR_MOTIFS[0]) }))
+      .map(x => ({
+        label:(x.label||"").trim(),
+        motif: x.motif === "Autre"
+          ? (x.motifCustom || "Autre")
+          : (x.motif || DETECTEUR_MOTIFS[0])
+      }))
       .filter(x => x.label);
 
     if (ex.length) {
@@ -1922,6 +2560,46 @@ function resetCurrentReport() {
   scheduleCloudSave();
 }
 
+
+function updateDaySelect() {
+  const sel = document.getElementById("daySelect");
+  if (!sel) return;
+
+  sel.innerHTML = "";
+
+  days.forEach((day, idx) => {
+    const opt = document.createElement("option");
+    opt.value = String(idx);
+
+    const dmy = formatDMYFromISO(day.dateISO || "");
+    opt.textContent = dmy ? `Jour ${idx + 1} — ${dmy}` : `Jour ${idx + 1}`;
+
+    sel.appendChild(opt);
+  });
+
+  if (currentDayIndex < 0) currentDayIndex = 0;
+  if (currentDayIndex >= days.length) currentDayIndex = days.length - 1;
+
+  sel.value = String(currentDayIndex);
+}
+
+function setDayLabel() {
+  const el = document.getElementById("dayLabel");
+  if (!el) return;
+
+  const day = getDay();
+  if (!day) {
+    el.textContent = "";
+    return;
+  }
+
+  const dmy = formatDMYFromISO(day.dateISO || "");
+  el.textContent = dmy
+    ? `Jour actif : Jour ${currentDayIndex + 1} — ${dmy}`
+    : `Jour actif : Jour ${currentDayIndex + 1}`;
+}
+
+
 /***********************
  * Jour navigation
  ***********************/
@@ -1977,6 +2655,7 @@ function setTab(type) {
 document.getElementById("tab-rev").addEventListener("click", () => setTab("rev"));
 document.getElementById("tab-det").addEventListener("click", () => setTab("det"));
 document.getElementById("tab-dep").addEventListener("click", () => setTab("dep"));
+document.getElementById("tab-mes").addEventListener("click", () => setTab("mes"));
 
 document.getElementById("copyBtn").addEventListener("click", copyReport);
 document.getElementById("resetBtn").addEventListener("click", resetCurrentReport);
@@ -2126,8 +2805,9 @@ function initLocalUI() {
   // Déconnexion
   document.addEventListener("click", async (e) => {
     if (!e.target || e.target.id !== "logoutBtn") return;
-    try { await fns.signOut(auth); } catch {}
+        try { await fns.signOut(auth); } catch {}
     TECH_ID = "";
+    cloudLoadedOnce = false;
     localStorage.removeItem("tech_id");
     loginScreen.style.display = "flex";
     showErr("");
@@ -2153,14 +2833,18 @@ function initLocalUI() {
     loginScreen.style.display = "none";
     appRoot.style.display = "block";
 
-    // Init local (offline) + tente de charger le cloud
+    // 1) charge d'abord le local pour affichage rapide
     initLocalUI();
 
-    const loaded = await cloudLoadNow("au démarrage");
-    if (!loaded) {
-      // Premier lancement → pousse l'état local vers le cloud
-      await cloudSaveNow("init");
-    }
+    // 2) charge le cloud ensuite, sans bloquer l'ouverture
+    setTimeout(async () => {
+      const loaded = await cloudLoadNow("au démarrage");
+
+      // Premier lancement cloud : on envoie le local actuel
+      if (!loaded) {
+        await cloudSaveNow("init-empty-cloud");
+      }
+    }, 0);
   });
 })();
 
@@ -2174,7 +2858,11 @@ function buildFeedbackText() {
   const day = getDay();
   const dayLabel = `Jour ${currentDayIndex + 1}`;
   const date = (day && day.dateISO) ? formatDMYFromISO(day.dateISO) : "";
-  const typeLabel = currentType === "rev" ? "AR" : currentType === "det" ? "MR" : "Dépannage";
+  const typeLabel =
+  currentType === "rev" ? "AR" :
+  currentType === "det" ? "MR" :
+  currentType === "mes" ? "Mise en service" :
+  "Dépannage";
 
   const app = (typeof APP_VERSION !== "undefined") ? APP_VERSION : "unknown";
 
@@ -2249,7 +2937,7 @@ window.addEventListener("load", () => {
 if ("serviceWorker" in navigator) {
 
   // ⚠️ Change ce numéro à chaque release (même que CACHE_NAME)
-  const SW_VERSION = "v12";
+  const SW_VERSION = "v13";
 
   navigator.serviceWorker
     .register("./service-worker.js?" + SW_VERSION)
