@@ -335,7 +335,207 @@ body.dark #mesContainer .mes-toggle.active{
   .mes-top-grid,.mes-grid2,.mes-mini-actions{grid-template-columns:1fr}
 }
 
-  </style>
+  
+/* === V5 MIX visual refresh === */
+:root{
+  --app-bg-1:#f5f7fb;
+  --app-bg-2:#eef4ff;
+  --glass:#ffffffcc;
+  --card-border:#dfe7f5;
+  --card-shadow:0 10px 30px rgba(16,24,40,.08);
+  --accent:#0f62fe;
+  --accent-2:#111827;
+  --ok:#16a34a;
+  --warn:#dc2626;
+}
+
+html, body { min-height:100%; }
+body{
+  margin:0;
+  padding:24px;
+  background:
+    radial-gradient(circle at top left, #f7fbff 0%, #eef4ff 35%, #f6f7fb 100%);
+  color:#111827;
+}
+#appRoot{
+  max-width: 1280px;
+  margin: 0 auto;
+}
+body, input, textarea, select, button{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body > #appRoot > div:first-child{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(14px);
+  background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(241,246,255,.9));
+  border:1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: 24px;
+  padding:16px 18px;
+  margin-bottom:14px;
+}
+#appTitle{
+  font-size:28px !important;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+.card{
+  background: rgba(255,255,255,.82);
+  backdrop-filter: blur(12px);
+  border:1px solid var(--card-border);
+  border-radius: 22px;
+  box-shadow: var(--card-shadow);
+  padding:16px;
+}
+.tabs{
+  gap:10px;
+}
+.tabs button{
+  border-radius:14px;
+  border:1px solid #dbe3f0;
+  background:rgba(255,255,255,.9);
+  font-weight:700;
+  padding:11px 14px;
+  box-shadow: 0 2px 8px rgba(15,23,42,.04);
+}
+.tabs button.active{
+  background: linear-gradient(135deg, #111827, #1f2937);
+  color:#fff;
+  border-color:#111827;
+}
+button{
+  border-radius:14px;
+  border:1px solid #d7deea;
+  background:#fff;
+  padding:10px 14px;
+  box-shadow:0 2px 6px rgba(15,23,42,.04);
+  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+button:hover{
+  transform: translateY(-1px);
+  box-shadow:0 8px 18px rgba(15,23,42,.08);
+  border-color:#c4d1e5;
+}
+button.primary{
+  background: linear-gradient(135deg, var(--accent), #4f8cff);
+  color:#fff;
+  border-color:transparent;
+}
+button.primary:hover{ box-shadow:0 12px 20px rgba(15,98,254,.22); }
+input[type="text"], input[type="date"], input[type="password"], select, textarea{
+  border-radius:14px;
+  border:1px solid #d9e2ef;
+  background:#fff;
+  box-shadow: inset 0 1px 2px rgba(16,24,40,.03);
+}
+input[type="text"]:focus, input[type="date"]:focus, input[type="password"]:focus, select:focus, textarea:focus{
+  outline:none;
+  border-color:#8db4ff;
+  box-shadow: 0 0 0 4px rgba(15,98,254,.12);
+}
+#preview{
+  min-height:280px;
+  background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+  color:#f8fafc;
+  border:1px solid #1f2937;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  line-height:1.5;
+}
+.tri-item, .mes-control-item, .mes-toggle, .mes-section{
+  border-radius:16px !important;
+}
+.tri-item{
+  border-color:#e4e9f3;
+  background:rgba(255,255,255,.84);
+}
+.tri-item.done{
+  background:linear-gradient(180deg, #f7fff9 0%, #f1fff4 100%);
+}
+.tri-item.notdone{
+  background:linear-gradient(180deg, #fff8f8 0%, #fff2f2 100%);
+}
+.tri-badge, .mes-tri-badge{
+  border-radius:12px !important;
+  background:#f8fafc;
+}
+.muted{ color:#667085; }
+.small{ font-size:12px; color:#667085; }
+
+#loginScreen{
+  background: radial-gradient(circle at top, #1e3a8a 0%, #0f172a 60%, #020617 100%) !important;
+}
+#loginScreen > div{
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  backdrop-filter: blur(12px);
+}
+
+.app-subtitle{
+  font-size:13px;
+  color:#667085;
+  margin-top:4px;
+}
+.app-chipbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.app-chip{
+  border:1px solid #d9e2ef;
+  background:#fff;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:12px;
+  color:#475467;
+}
+#cloudStatusBadge.syncing{ color:#8a5b00; background:#fff7e6; border-color:#f3d084; }
+#cloudStatusBadge.ok{ color:#166534; background:#ecfdf3; border-color:#a7f3d0; }
+#cloudStatusBadge.offline{ color:#991b1b; background:#fff1f2; border-color:#fecdd3; }
+
+body.dark{
+  background: radial-gradient(circle at top left, #162032 0%, #101827 38%, #0b1220 100%);
+}
+body.dark > #appRoot > div:first-child{
+  background: linear-gradient(135deg, rgba(32,42,58,.92), rgba(17,24,39,.92));
+  border-color:#314056;
+}
+body.dark .card{
+  background: rgba(25,32,44,.85);
+  border-color:#334155;
+  box-shadow:0 12px 26px rgba(0,0,0,.24);
+}
+body.dark input, body.dark textarea, body.dark select, body.dark button{
+  background:#16202c;
+  color:#e5e7eb;
+  border-color:#334155;
+}
+body.dark .tabs button{
+  background:#16202c;
+  border-color:#334155;
+  color:#e5e7eb;
+}
+body.dark .tabs button.active{
+  background:linear-gradient(135deg, #f8fafc, #e5e7eb);
+  color:#111827;
+  border-color:#e5e7eb;
+}
+body.dark .tri-item{
+  background:#141b27;
+  border-color:#334155;
+}
+body.dark .tri-item.done{ background:#122318; }
+body.dark .tri-item.notdone{ background:#2a1618; }
+body.dark .app-chip{
+  background:#16202c;
+  color:#cbd5e1;
+  border-color:#334155;
+}
+
+</style>
 </head>
 
 <body>
@@ -523,7 +723,7 @@ body.dark #mesContainer .mes-toggle.active{
 /***********************
  * VERSION (UI uniquement)
  ***********************/
-const APP_VERSION = "2.4.0-firebase";
+const APP_VERSION = "5.0.0-firebase";
 function renderAppTitle() {
   const h = document.getElementById("appTitle");
   if (h) h.textContent = "Rapport intervention";
@@ -3046,7 +3246,7 @@ window.addEventListener("load", () => {
 if ("serviceWorker" in navigator) {
 
   // ⚠️ Change ce numéro à chaque release (même que CACHE_NAME)
-  const SW_VERSION = "v14";
+  const SW_VERSION = "v15";
 
   navigator.serviceWorker
     .register("./service-worker.js?" + SW_VERSION)
@@ -3075,5 +3275,74 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+<script>
+/* === V5 MIX cosmetic helpers === */
+(function(){
+  function ensureTopUI(){
+    const header = document.querySelector('body > #appRoot > div:first-child');
+    if(!header || document.getElementById('cloudStatusBadge')) return;
+
+    const titleWrap = document.createElement('div');
+    const existingTitle = document.getElementById('appTitle');
+    if(existingTitle && existingTitle.parentNode === header){
+      titleWrap.appendChild(existingTitle);
+      const sub = document.createElement('div');
+      sub.className = 'app-subtitle';
+      sub.textContent = 'Rapports multi-appareils • sauvegarde locale + cloud • version V5 MIX';
+      titleWrap.appendChild(sub);
+      header.insertBefore(titleWrap, header.firstChild);
+    }
+
+    const right = header.querySelector('div[style*="gap:8px"]');
+    if(right){
+      const chipbar = document.createElement('div');
+      chipbar.className = 'app-chipbar';
+      chipbar.innerHTML = '<span id="cloudStatusBadge" class="app-chip syncing">☁️ Connexion...</span><span class="app-chip">⚡ Ouverture rapide</span><span class="app-chip">🎨 V5 MIX</span>';
+      header.insertBefore(chipbar, right);
+    }
+
+    // beautify feedback/dark/logout buttons lightly
+    ['feedbackBtn','darkToggle','logoutBtn'].forEach(id=>{
+      const btn=document.getElementById(id);
+      if(btn) btn.style.fontWeight='700';
+    });
+  }
+
+  function setCloudBadge(text, cls){
+    const el = document.getElementById('cloudStatusBadge');
+    if(!el) return;
+    el.textContent = text;
+    el.classList.remove('syncing','ok','offline');
+    if(cls) el.classList.add(cls);
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    ensureTopUI();
+    setCloudBadge(navigator.onLine ? '☁️ Initialisation...' : '☁️ Hors ligne', navigator.onLine ? 'syncing' : 'offline');
+  });
+
+  const _status = window.status;
+  window.status = function(msg){
+    try{
+      if(typeof msg === 'string'){
+        if(/Cloud chargé|synchron|sauvegard/i.test(msg)) setCloudBadge('☁️ Synchronisé', 'ok');
+        else if(/offline|hors ligne/i.test(msg)) setCloudBadge('☁️ Hors ligne', 'offline');
+      }
+    }catch(e){}
+    return _status.apply(this, arguments);
+  };
+
+  window.addEventListener('online', ()=> setCloudBadge('☁️ En ligne', 'syncing'));
+  window.addEventListener('offline', ()=> setCloudBadge('☁️ Hors ligne', 'offline'));
+
+  // Fallback if firebase takes time: app still visible and badge updates softly
+  setTimeout(()=> {
+    const login = document.getElementById('loginScreen');
+    if(login && login.style.display !== 'none' && navigator.onLine){
+      setCloudBadge('☁️ Connexion prête', 'syncing');
+    }
+  }, 1500);
+})();
+</script>
 </body>
 </html>
