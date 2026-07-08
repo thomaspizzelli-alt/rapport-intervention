@@ -20,7 +20,7 @@
     button.primary { border-color: #000; font-weight: 600; }
     label { display: flex; gap: 8px; align-items: center; margin: 6px 0; cursor: pointer; }
     textarea { width: 100%; min-height: 190px; border-radius: 10px; border: 1px solid #ddd; padding: 10px; }
-    input[type="text"] { padding: 8px; border-radius: 10px; border: 1px solid #ddd; }
+    input[type="text"], input[type="tel"], input[type="datetime-local"] { padding: 8px; border-radius: 10px; border: 1px solid #ddd; }
     select { padding: 8px; border-radius: 10px; border: 1px solid #ddd; }
     .muted { color: #666; font-size: 12px; }
     .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -496,6 +496,54 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="password"]:focus
 #cloudStatusBadge.ok{ color:#166534; background:#ecfdf3; border-color:#a7f3d0; }
 #cloudStatusBadge.offline{ color:#991b1b; background:#fff1f2; border-color:#fecdd3; }
 
+.skt-layout{display:grid;gap:12px}
+.skt-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.skt-field{display:grid;gap:6px}
+.skt-field.full{grid-column:1/-1}
+.skt-field span{font-size:12px;color:#667085}
+.skt-actions,.skt-template-grid,.skt-reminder-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.skt-template-grid button{font-size:13px}
+.skt-ticket-bar{display:grid;grid-template-columns:minmax(220px,1fr) auto auto auto;gap:8px;align-items:end}
+.skt-reminder-list{display:flex;gap:8px;flex-wrap:wrap}
+.skt-reminder-chip{border:1px solid #d9e2ef;background:#fff;border-radius:999px;padding:7px 10px;font-size:12px;color:#475467}
+.skt-reminder-chip.soon{background:#fff7e6;border-color:#f3d084;color:#8a5b00}
+.skt-reminder-chip.due{background:#fff1f2;border-color:#fecdd3;color:#991b1b;font-weight:700}
+.skt-result-grid{display:flex;gap:8px;flex-wrap:wrap}
+.skt-result-grid button.active,
+.skt-template-grid button.active{background:linear-gradient(135deg,#111827,#1f2937);color:#fff;border-color:#111827}
+#sktFinalText{min-height:220px}
+#sktStatus,#sktReminderInfo{min-height:18px}
+.skt-reminder-modal{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:9998;
+  width:360px;
+  max-width:calc(100vw - 36px);
+  border:2px solid #dc2626;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 20px 50px rgba(220,38,38,.28), 0 0 0 4px rgba(220,38,38,.10);
+  padding:16px;
+}
+.skt-reminder-modal h3{margin:0 0 8px;font-size:16px}
+body.dark .skt-field span{color:#aaa}
+body.dark .skt-reminder-chip{background:#16202c;color:#cbd5e1;border-color:#334155}
+body.dark .skt-reminder-chip.soon{background:#3a2b12;border-color:#8a5b00;color:#ffd58a}
+body.dark .skt-reminder-chip.due{background:#3a1519;border-color:#7f1d1d;color:#fecdd3}
+body.dark .skt-result-grid button.active,
+body.dark .skt-template-grid button.active{background:#fff;color:#111;border-color:#fff}
+body.dark .skt-reminder-modal{
+  background:#19202c;
+  color:#e5e7eb;
+  border-color:#ef4444;
+}
+@media (max-width: 760px){
+  .skt-field-grid{grid-template-columns:1fr}
+  .skt-ticket-bar{grid-template-columns:1fr}
+  .skt-reminder-modal{left:18px;right:18px;width:auto}
+}
+
 body.dark{
   background: radial-gradient(circle at top left, #162032 0%, #101827 38%, #0b1220 100%);
 }
@@ -577,12 +625,13 @@ body.dark .app-chip{
   <h1 id="appTitle" style="margin:0;">Rapport intervention</h1>
 
   <div style="display:flex; gap:8px;">
+    <button id="sktModeToggle" type="button">Mode SKT</button>
     <button id="feedbackBtn" type="button" class="primary">💡 Proposer</button>
     <button id="darkToggle" type="button">🌙 Mode sombre</button>
   </div>
 </div>
 
-
+<div id="ktInterface">
   <div class="muted">
     Offline : oui (stocké sur l’appareil) + synchronisation cloud quand internet revient.
   </div>
@@ -679,6 +728,90 @@ body.dark .app-chip{
 
   </div>
 
+  </div>
+
+  <div id="sktPanel" class="card" style="display:none;">
+    <h2 style="font-size:18px;margin:0 0 10px;">Helpline</h2>
+    <div class="skt-layout">
+      <div class="skt-ticket-bar">
+        <label class="skt-field">
+          <span>Ticket Helpline actif / en rappel</span>
+          <select id="sktTicketSelect"></select>
+        </label>
+        <button id="sktNewTicketBtn" type="button" class="primary">Nouveau ticket</button>
+        <button id="sktDoneTicketBtn" type="button">Terminé</button>
+        <button id="sktDeleteTicketBtn" type="button">Supprimer</button>
+      </div>
+
+      <div>
+        <div class="small" style="margin-bottom:6px;">Tickets en rappel</div>
+        <div id="sktReminderTickets" class="skt-reminder-list"></div>
+      </div>
+
+      <div class="skt-field-grid">
+        <label class="skt-field">
+          <span>Nom du rapport / client / site</span>
+          <input id="sktClientSite" type="text" placeholder="Ex: Clinique X / SSI bâtiment A" />
+        </label>
+        <label class="skt-field">
+          <span>Nom de la personne si connu</span>
+          <input id="sktPersonName" type="text" placeholder="Ex: M. Dupont" />
+        </label>
+        <label class="skt-field">
+          <span>Téléphone si connu</span>
+          <input id="sktPhone" type="tel" placeholder="Ex: 06..." />
+        </label>
+        <label class="skt-field">
+          <span>Type de demande</span>
+          <select id="sktRequestType"></select>
+        </label>
+        <label class="skt-field full">
+          <span>Notes libres</span>
+          <textarea id="sktNotes" placeholder="Notes internes avant rédaction..."></textarea>
+        </label>
+      </div>
+
+      <div class="skt-actions">
+        <button id="sktNoAnswerBtn" type="button" class="primary">Client appelé sans réponse</button>
+        <button id="sktCopyBtn" type="button">Copier</button>
+      </div>
+
+      <div>
+        <div class="small" style="margin-bottom:6px;">Modèles rapides</div>
+        <div id="sktTemplates" class="skt-template-grid"></div>
+      </div>
+
+      <div class="card" style="margin:0;">
+        <h2 style="font-size:15px;margin:0 0 8px;">Rappel différé</h2>
+        <div class="row" style="margin-bottom:6px;">
+          <select id="sktReminderDelay">
+            <option value="">Aucun rappel</option>
+            <option value="30">30 min</option>
+            <option value="60">1h</option>
+            <option value="120">2h</option>
+            <option value="180">3h</option>
+            <option value="custom">Heure personnalisée</option>
+          </select>
+          <input id="sktReminderCustom" type="datetime-local" style="display:none;" />
+          <button id="sktReminderSetBtn" type="button">Définir rappel</button>
+        </div>
+        <div id="sktReminderInfo" class="muted"></div>
+      </div>
+
+      <label class="skt-field">
+        <span>Texte final généré</span>
+        <div class="skt-actions">
+          <button id="sktDictationBtn" type="button">🎙 Dictée vocale</button>
+        </div>
+        <textarea id="sktFinalText" placeholder="Choisis un modèle ou écris ton texte..."></textarea>
+      </label>
+      <div class="card" style="margin:0;">
+        <h2 style="font-size:15px;margin:0 0 8px;">Résultat du traitement</h2>
+        <div id="sktResultOptions" class="skt-result-grid"></div>
+      </div>
+      <div id="sktStatus" class="muted"></div>
+    </div>
+  </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -723,7 +856,7 @@ body.dark .app-chip{
 /***********************
  * VERSION (UI uniquement)
  ***********************/
-const APP_VERSION = "5.0.0-firebase";
+const APP_VERSION = "5.2.2-skt-helpline";
 function renderAppTitle() {
   const h = document.getElementById("appTitle");
   if (h) h.textContent = "Rapport intervention";
@@ -771,6 +904,7 @@ function addDaysISO(iso, daysToAdd) {
 const STORE_VERSION = 3;
 const STORE_INDEX_KEY = "rapport_intervention_index_v3";
 const STORE_ACTIVE_KEY = "rapport_intervention_active_v3";
+const SKT_STORE_KEY = "rapport_intervention_skt_v1";
 
 function uid() { return "r_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8); }
 function safeParseJSON(s) { try { return JSON.parse(s); } catch { return null; } }
@@ -800,6 +934,651 @@ function status(msg) {
   setTimeout(()=> el.textContent="", 1800);
 }
 
+/***********************
+ * SKT / Helpline
+ ***********************/
+const SKT_PREFIX = "Traitement HL";
+const SKT_REQUEST_TYPES = [
+  "Le client demande des renseignements",
+  "Aide à l'exploitation",
+  "Mise hors service / remise en service de zone",
+  "Explication voyant / LED / clignotement",
+  "Dérangement",
+  "Ligne ouverte",
+  "Court-circuit",
+  "Défaut batterie",
+  "Défaut alimentation",
+  "Défaut transmission",
+  "Détecteur en dérangement",
+  "Remise en service / redémarrage d'une ligne",
+  "Client appelé sans réponse",
+  "Autre demande"
+];
+
+const SKT_TEMPLATES = [
+  ["info", "Le client demande des renseignements", "Le client demande des renseignements concernant son installation.", "Renseignements transmis au client concernant l'installation, son état et les consignes d'exploitation applicables."],
+  ["help", "Aide à l'exploitation", "Le client demande de l'aide concernant l'exploitation de son installation.", "Explications transmises au client concernant l'exploitation de la centrale."],
+  ["zones", "Mise hors service / remise en service de zone", "Une demande de mise hors service ou de remise en service de zone est formulée.", "Accompagnement effectué pour la mise hors service ou la remise en service de la zone concernée."],
+  ["led", "Explication voyant / LED / clignotement", "Le client signale un voyant, une LED ou un clignotement à expliquer.", "Explications transmises concernant le voyant, la LED ou le clignotement constaté."],
+  ["fault", "Dérangement", "Un dérangement est signalé sur l'installation.", "Premières consignes transmises au client afin d'identifier et de sécuriser le dérangement."],
+  ["open", "Ligne ouverte", "Un dérangement de type ligne ouverte est signalé.", "Contrôles et indications transmis concernant la ligne ouverte."],
+  ["short", "Court-circuit", "Un dérangement de type court-circuit est signalé.", "Contrôles et indications transmis concernant le court-circuit et l'isolement de la ligne concernée."],
+  ["battery", "Défaut batterie", "Un défaut batterie est annoncé sur l'installation.", "Informations données concernant le défaut batterie et les contrôles à prévoir."],
+  ["power", "Défaut alimentation", "Un défaut alimentation est annoncé sur l'installation.", "Vérifications demandées concernant l'alimentation secteur et les protections associées."],
+  ["trans", "Défaut transmission", "Un défaut transmission est signalé.", "Contrôles demandés concernant la liaison et les informations de transmission."],
+  ["detector", "Détecteur en dérangement", "Un détecteur en dérangement est signalé.", "Contrôles indiqués concernant le détecteur en dérangement et l'élément concerné."],
+  ["restart", "Remise en service / redémarrage d'une ligne", "Une remise en service ou un redémarrage de ligne est demandé.", "Accompagnement effectué pour la remise en service ou le redémarrage de la ligne concernée."],
+  ["noanswer", "Client appelé sans réponse", "Le client a été appelé sans réponse.", "Tentative d'appel du client effectuée, sans réponse. Nouvelle tentative prévue ultérieurement."],
+  ["other", "Autre demande", "Une autre demande est formulée par le client.", "Demande prise en compte et réponse apportée selon les informations disponibles."]
+];
+
+const SKT_RESULTS = [
+  ["solved", "Problème solutionné par la Helpline, dossier clôturé", "Problème solutionné par la Helpline. Dossier clôturé."],
+  ["kt", "KT à envoyer sur site, impossible de régler le problème à distance", "Un KT doit être envoyé sur site, le problème ne pouvant pas être réglé à distance."],
+  ["waiting_client", "En attente retour client", "En attente d'un retour client."],
+  ["waiting_call", "En attente rappel client", "En attente d'un rappel client."],
+  ["other", "Autre", "Autre résultat de traitement à préciser."]
+];
+
+let sktReminderPopupOpen = false;
+let sktReminderPopupTicketId = "";
+let sktRecognition = null;
+let sktDictating = false;
+let sktDictationTicketId = "";
+
+function stopSktSpeechRecognition() {
+  const btn = document.getElementById("sktDictationBtn");
+  try {
+    if (sktRecognition) sktRecognition.stop();
+  } catch {}
+  sktDictating = false;
+  sktRecognition = null;
+  sktDictationTicketId = "";
+  if (btn) btn.textContent = "🎙 Dictée vocale";
+}
+
+function sktTicketId() {
+  return "hl_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+}
+
+function ensureSktTreatmentPrefix(text) {
+  let value = String(text || "").replace(/\r\n/g, "\n");
+  value = value
+    .replace(/^\s*(?:Traitement\s*H(?:L)?\s*)+/i, "")
+    .replace(/(?:\n\s*)+Traitement\s*H(?:L)?\s*$/gi, "")
+    .replace(/\n\s*Traitement\s*H(?:L)?\s*/gi, "\n");
+
+  value = value.replace(/^\s+/, "");
+  return value ? `${SKT_PREFIX}\n\n${value}`.trimEnd() : SKT_PREFIX;
+}
+
+function normalizeSktFinalText(text) {
+  return ensureSktTreatmentPrefix(text);
+}
+
+function protectSktPrefixKeydown(e) {
+  const el = e.target;
+  if (!el || el.id !== "sktFinalText") return;
+
+  const prefixEnd = SKT_PREFIX.length;
+  const start = el.selectionStart ?? 0;
+  const end = el.selectionEnd ?? start;
+
+  if ((e.key === "Backspace" && start <= prefixEnd) || (e.key === "Delete" && start < prefixEnd) || (start < prefixEnd && end > start)) {
+    e.preventDefault();
+    if (!el.value.startsWith(SKT_PREFIX)) el.value = ensureSktTreatmentPrefix(el.value);
+    try { el.setSelectionRange(prefixEnd, prefixEnd); } catch {}
+  }
+}
+
+function defaultSktTicket() {
+  const now = Date.now();
+  return {
+    id: sktTicketId(),
+    clientSite: "",
+    personName: "",
+    phone: "",
+    requestType: SKT_REQUEST_TYPES[0],
+    templateKeys: [],
+    notes: "",
+    finalText: SKT_PREFIX,
+    result: "",
+    status: "actif",
+    rappelAt: null,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+
+function normalizeSktTicket(ticket) {
+  const base = defaultSktTicket();
+  const rawStatus = String(ticket?.status || base.status);
+  const status = ["actif", "rappel", "termine"].includes(rawStatus) ? rawStatus : "actif";
+  const rappelAt = Number.isFinite(ticket?.rappelAt) ? ticket.rappelAt : null;
+  return {
+    id: String(ticket?.id || base.id),
+    clientSite: String(ticket?.clientSite || ticket?.client || ""),
+    personName: String(ticket?.personName || ticket?.person || ""),
+    phone: String(ticket?.phone || ""),
+    requestType: SKT_REQUEST_TYPES.includes(ticket?.requestType) ? ticket.requestType : (String(ticket?.requestType || "") || SKT_REQUEST_TYPES[0]),
+    templateKeys: Array.isArray(ticket?.templateKeys)
+      ? [...new Set(ticket.templateKeys.filter(key => SKT_TEMPLATES.some(([tplKey]) => tplKey === key)))]
+      : [],
+    notes: String(ticket?.notes || ""),
+    finalText: normalizeSktFinalText(ticket?.finalText || ""),
+    result: SKT_RESULTS.some(([key]) => key === ticket?.result) ? ticket.result : "",
+    status: rappelAt && status !== "termine" ? "rappel" : status,
+    rappelAt,
+    createdAt: Number.isFinite(ticket?.createdAt) ? ticket.createdAt : Date.now(),
+    updatedAt: Number.isFinite(ticket?.updatedAt) ? ticket.updatedAt : Date.now()
+  };
+}
+
+function defaultSktData() {
+  const ticket = defaultSktTicket();
+  return {
+    v: 2,
+    mode: false,
+    activeTicketId: ticket.id,
+    tickets: [ticket],
+    updatedAt: Date.now()
+  };
+}
+
+function migrateLegacySktData(data) {
+  const fields = data && data.fields && typeof data.fields === "object" ? data.fields : {};
+  const ticket = normalizeSktTicket({
+    clientSite: fields.clientSite,
+    personName: fields.personName,
+    phone: fields.phone,
+    requestType: fields.requestType,
+    templateKeys: [],
+    notes: fields.notes,
+    finalText: fields.finalText,
+    status: data?.reminder?.dueAt ? "rappel" : "actif",
+    rappelAt: Number.isFinite(data?.reminder?.dueAt) ? data.reminder.dueAt : null,
+    createdAt: Number.isFinite(data?.updatedAt) ? data.updatedAt : Date.now(),
+    updatedAt: Number.isFinite(data?.updatedAt) ? data.updatedAt : Date.now()
+  });
+  return {
+    v: 2,
+    mode: !!data?.mode,
+    activeTicketId: ticket.id,
+    tickets: [ticket],
+    updatedAt: Number.isFinite(data?.updatedAt) ? data.updatedAt : Date.now()
+  };
+}
+
+function normalizeSktData(data) {
+  if (!data || typeof data !== "object") return defaultSktData();
+  if (!Array.isArray(data.tickets)) return migrateLegacySktData(data);
+
+  const tickets = data.tickets.map(normalizeSktTicket).filter(t => t.id);
+  if (!tickets.length) tickets.push(defaultSktTicket());
+
+  let activeTicketId = String(data.activeTicketId || "");
+  const visible = tickets.filter(t => t.status === "actif" || t.status === "rappel");
+  const activeTicket = tickets.find(t => t.id === activeTicketId);
+  if (!activeTicket || (activeTicket.status === "termine" && visible.length)) activeTicketId = (visible[0] || tickets[0]).id;
+
+  return {
+    v: 2,
+    mode: !!data.mode,
+    activeTicketId,
+    tickets,
+    updatedAt: Number.isFinite(data.updatedAt) ? data.updatedAt : Date.now()
+  };
+}
+
+function loadSktData() {
+  return normalizeSktData(safeParseJSON(localStorage.getItem(SKT_STORE_KEY)));
+}
+
+function saveSktData(data, sync = true) {
+  const clean = normalizeSktData(data);
+  clean.updatedAt = Date.now();
+  localStorage.setItem(SKT_STORE_KEY, JSON.stringify(clean));
+  if (sync) scheduleCloudSave();
+  return clean;
+}
+
+function ensureSktStorage() {
+  if (!localStorage.getItem(SKT_STORE_KEY)) saveSktData(defaultSktData(), false);
+  else saveSktData(loadSktData(), false);
+}
+
+function getActiveSktTicket(data = loadSktData()) {
+  return data.tickets.find(t => t.id === data.activeTicketId) || data.tickets.find(t => t.status !== "termine") || data.tickets[0];
+}
+
+function getSktTicketLabel(ticket) {
+  return (ticket?.clientSite || ticket?.personName || "client/site").trim();
+}
+
+function getSktLabel(dataOrTicket) {
+  if (dataOrTicket && Array.isArray(dataOrTicket.tickets)) return getSktTicketLabel(getActiveSktTicket(dataOrTicket));
+  return getSktTicketLabel(dataOrTicket);
+}
+
+function setSktStatus(msg) {
+  const el = document.getElementById("sktStatus");
+  if (!el) return;
+  el.textContent = msg || "";
+  if (msg) setTimeout(() => { if (el.textContent === msg) el.textContent = ""; }, 2200);
+}
+
+function formatDateTimeLocal(ts) {
+  if (!Number.isFinite(ts)) return "";
+  const d = new Date(ts);
+  return `${pad2(d.getDate())}-${pad2(d.getMonth()+1)}-${d.getFullYear()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+function toDateTimeLocalValue(ts) {
+  if (!Number.isFinite(ts)) return "";
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+function getSktReminderClass(ticket) {
+  if (!Number.isFinite(ticket?.rappelAt)) return "";
+  const diff = ticket.rappelAt - Date.now();
+  if (diff <= 0) return "due";
+  if (diff <= 5 * 60 * 1000) return "soon";
+  return "";
+}
+
+function saveSktFieldsFromUI(sync = true) {
+  const data = loadSktData();
+  const ticket = getActiveSktTicket(data);
+  if (!ticket) return saveSktData(data, sync);
+
+  ticket.clientSite = document.getElementById("sktClientSite")?.value || "";
+  ticket.personName = document.getElementById("sktPersonName")?.value || "";
+  ticket.phone = document.getElementById("sktPhone")?.value || "";
+  ticket.requestType = document.getElementById("sktRequestType")?.value || SKT_REQUEST_TYPES[0];
+  ticket.notes = document.getElementById("sktNotes")?.value || "";
+  ticket.finalText = normalizeSktFinalText(document.getElementById("sktFinalText")?.value || "");
+  ticket.updatedAt = Date.now();
+
+  const finalEl = document.getElementById("sktFinalText");
+  if (finalEl && finalEl.value !== ticket.finalText) {
+    const pos = Math.max(SKT_PREFIX.length, finalEl.selectionStart || ticket.finalText.length);
+    finalEl.value = ticket.finalText;
+    try { finalEl.setSelectionRange(pos, pos); } catch {}
+  }
+
+  return saveSktData(data, sync);
+}
+
+function buildSktTextFromTicket(ticket) {
+  const result = SKT_RESULTS.find(([key]) => key === ticket.result);
+  const selected = (ticket.templateKeys || [])
+    .map(key => SKT_TEMPLATES.find(([tplKey]) => tplKey === key))
+    .filter(Boolean);
+
+  const lines = [SKT_PREFIX, ""];
+
+  if (ticket.personName.trim()) {
+    lines.push(`Contact : ${ticket.personName.trim()}`);
+    lines.push("");
+  }
+
+  if (selected.length) {
+    lines.push("Demandes / constats :");
+    selected.forEach(([, , demand]) => lines.push(`- ${demand}`));
+    lines.push("");
+    lines.push("Traitement :");
+    selected.forEach(([, , , treatment]) => lines.push(`- ${treatment}`));
+  } else if (ticket.notes.trim()) {
+    lines.push("Demande :");
+    lines.push(ticket.notes.trim());
+  }
+
+  if (ticket.notes.trim() && selected.length) {
+    lines.push("");
+    lines.push("Notes :");
+    lines.push(ticket.notes.trim());
+  }
+
+  if (result) {
+    lines.push("");
+    lines.push("Résultat :");
+    lines.push(result[2]);
+  }
+
+  return normalizeSktFinalText(lines.join("\n").trim());
+}
+
+function renderSktReminderInfo(data = loadSktData()) {
+  const el = document.getElementById("sktReminderInfo");
+  if (!el) return;
+  const ticket = getActiveSktTicket(data);
+  el.textContent = ticket?.rappelAt
+    ? `Rappel prévu le ${formatDateTimeLocal(ticket.rappelAt)} pour ${getSktTicketLabel(ticket)}.`
+    : "Aucun rappel défini pour ce ticket.";
+}
+
+function renderSktPanel() {
+  const data = loadSktData();
+  const ticket = getActiveSktTicket(data);
+
+  const ticketSel = document.getElementById("sktTicketSelect");
+  if (ticketSel) {
+    ticketSel.innerHTML = "";
+    const visible = data.tickets.filter(t => t.status === "actif" || t.status === "rappel");
+    visible.forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t.id;
+      opt.textContent = `${getSktTicketLabel(t)} - ${t.status === "rappel" ? "rappel" : "actif"}${t.rappelAt ? " - " + formatDateTimeLocal(t.rappelAt) : ""}`;
+      opt.className = getSktReminderClass(t);
+      ticketSel.appendChild(opt);
+    });
+    if (ticket) ticketSel.value = ticket.id;
+  }
+
+  const typeSel = document.getElementById("sktRequestType");
+  if (typeSel) {
+    typeSel.innerHTML = "";
+    SKT_REQUEST_TYPES.forEach(label => {
+      const opt = document.createElement("option");
+      opt.value = label;
+      opt.textContent = label;
+      typeSel.appendChild(opt);
+    });
+  }
+
+  const tplHost = document.getElementById("sktTemplates");
+  if (tplHost) {
+    tplHost.innerHTML = "";
+    SKT_TEMPLATES.forEach(([key, label]) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.sktTemplate = key;
+      btn.classList.toggle("active", (ticket?.templateKeys || []).includes(key));
+      btn.textContent = label;
+      tplHost.appendChild(btn);
+    });
+  }
+
+  const resultHost = document.getElementById("sktResultOptions");
+  if (resultHost) {
+    resultHost.innerHTML = "";
+    SKT_RESULTS.forEach(([key, label]) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.sktResult = key;
+      btn.classList.toggle("active", ticket?.result === key);
+      btn.textContent = label;
+      resultHost.appendChild(btn);
+    });
+  }
+
+  const reminderHost = document.getElementById("sktReminderTickets");
+  if (reminderHost) {
+    reminderHost.innerHTML = "";
+    const reminders = data.tickets.filter(t => t.status === "rappel" && Number.isFinite(t.rappelAt));
+    if (!reminders.length) {
+      const empty = document.createElement("span");
+      empty.className = "muted";
+      empty.textContent = "Aucun ticket en rappel.";
+      reminderHost.appendChild(empty);
+    } else {
+      reminders.sort((a,b) => a.rappelAt - b.rappelAt).forEach(t => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = `skt-reminder-chip ${getSktReminderClass(t)}`.trim();
+        chip.dataset.sktTicketOpen = t.id;
+        chip.textContent = `${getSktTicketLabel(t)} - ${formatDateTimeLocal(t.rappelAt)}`;
+        reminderHost.appendChild(chip);
+      });
+    }
+  }
+
+  const map = {
+    sktClientSite: ticket?.clientSite || "",
+    sktPersonName: ticket?.personName || "",
+    sktPhone: ticket?.phone || "",
+    sktRequestType: ticket?.requestType || SKT_REQUEST_TYPES[0],
+    sktNotes: ticket?.notes || "",
+    sktFinalText: normalizeSktFinalText(ticket?.finalText || "")
+  };
+
+  Object.entries(map).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el && el.value !== value) el.value = value;
+  });
+
+  const custom = document.getElementById("sktReminderCustom");
+  if (custom) custom.value = ticket?.rappelAt ? toDateTimeLocalValue(ticket.rappelAt) : "";
+
+  renderSktReminderInfo(data);
+  applySktMode(data.mode);
+}
+
+function applySktMode(enabled) {
+  if (!enabled) stopSktSpeechRecognition();
+  const data = loadSktData();
+  data.mode = !!enabled;
+  saveSktData(data, false);
+
+  const kt = document.getElementById("ktInterface");
+  const skt = document.getElementById("sktPanel");
+  const btn = document.getElementById("sktModeToggle");
+
+  if (kt) kt.style.display = enabled ? "none" : "";
+  if (skt) skt.style.display = enabled ? "block" : "none";
+  if (btn) btn.textContent = enabled ? "Mode KT" : "Mode SKT";
+}
+
+function withSktResultText(text, resultKey) {
+  const result = SKT_RESULTS.find(([key]) => key === resultKey);
+  let value = normalizeSktFinalText(text)
+    .replace(/\n\nRésultat du traitement :\n[\s\S]*$/m, "")
+    .replace(/\n\nRésultat :\n[\s\S]*$/m, "")
+    .trimEnd();
+  if (!result) return normalizeSktFinalText(value);
+  return normalizeSktFinalText(`${value}\n\nRésultat :\n${result[2]}`);
+}
+
+function setSktFinalText(text) {
+  const finalEl = document.getElementById("sktFinalText");
+  if (finalEl) finalEl.value = normalizeSktFinalText(text);
+  saveSktFieldsFromUI(true);
+}
+
+function toggleSktTemplate(key, forceSelected = null) {
+  const data = saveSktFieldsFromUI(false);
+  const ticket = getActiveSktTicket(data);
+  if (!ticket || !SKT_TEMPLATES.some(([tplKey]) => tplKey === key)) return;
+
+  const selected = new Set(ticket.templateKeys || []);
+  const shouldSelect = forceSelected === null ? !selected.has(key) : !!forceSelected;
+  if (shouldSelect) selected.add(key);
+  else selected.delete(key);
+
+  ticket.templateKeys = [...selected].filter(tplKey => SKT_TEMPLATES.some(([known]) => known === tplKey));
+  const last = [...ticket.templateKeys].at(-1);
+  const tpl = SKT_TEMPLATES.find(([tplKey]) => tplKey === last);
+  if (tpl) ticket.requestType = tpl[1];
+  ticket.finalText = buildSktTextFromTicket(ticket);
+  ticket.updatedAt = Date.now();
+
+  saveSktData(data, true);
+  renderSktPanel();
+}
+
+function createSktTicket() {
+  stopSktSpeechRecognition();
+  saveSktFieldsFromUI(false);
+  const data = loadSktData();
+  const ticket = defaultSktTicket();
+  data.tickets.unshift(ticket);
+  data.activeTicketId = ticket.id;
+  saveSktData(data, true);
+  renderSktPanel();
+  setSktStatus("Nouveau ticket créé ✅");
+}
+
+function finishSktTicket() {
+  stopSktSpeechRecognition();
+  const data = saveSktFieldsFromUI(false);
+  const ticket = getActiveSktTicket(data);
+  if (!ticket) return;
+  ticket.status = "termine";
+  ticket.rappelAt = null;
+  ticket.updatedAt = Date.now();
+
+  const next = data.tickets.find(t => t.id !== ticket.id && (t.status === "actif" || t.status === "rappel"));
+  if (next) data.activeTicketId = next.id;
+  else {
+    const fresh = defaultSktTicket();
+    data.tickets.unshift(fresh);
+    data.activeTicketId = fresh.id;
+  }
+
+  saveSktData(data, true);
+  renderSktPanel();
+  setSktStatus("Ticket terminé ✅");
+}
+
+function deleteSktTicket() {
+  stopSktSpeechRecognition();
+  const data = loadSktData();
+  const ticket = getActiveSktTicket(data);
+  if (!ticket) return;
+  const ok = confirm(`Supprimer définitivement ce ticket Helpline ?\n\n${getSktTicketLabel(ticket)}`);
+  if (!ok) return;
+
+  data.tickets = data.tickets.filter(t => t.id !== ticket.id);
+  const next = data.tickets.find(t => t.status === "actif" || t.status === "rappel");
+  if (next) data.activeTicketId = next.id;
+  else {
+    const fresh = defaultSktTicket();
+    data.tickets.unshift(fresh);
+    data.activeTicketId = fresh.id;
+  }
+
+  saveSktData(data, true);
+  renderSktPanel();
+  setSktStatus("Ticket supprimé ✅");
+}
+
+function setSktReminder(minutesOrCustom) {
+  const data = saveSktFieldsFromUI(false);
+  const ticket = getActiveSktTicket(data);
+  if (!ticket) return;
+  let dueAt = 0;
+
+  if (!minutesOrCustom) {
+    ticket.rappelAt = null;
+    ticket.status = "actif";
+    ticket.updatedAt = Date.now();
+    saveSktData(data, true);
+    renderSktPanel();
+    setSktStatus("Rappel annulé");
+    return;
+  }
+
+  if (minutesOrCustom === "custom") {
+    const raw = document.getElementById("sktReminderCustom")?.value || "";
+    dueAt = raw ? new Date(raw).getTime() : 0;
+  } else {
+    dueAt = Date.now() + Number(minutesOrCustom) * 60 * 1000;
+  }
+
+  if (!Number.isFinite(dueAt) || dueAt <= Date.now()) {
+    setSktStatus("Choisis une heure de rappel future.");
+    return;
+  }
+
+  ticket.rappelAt = dueAt;
+  ticket.status = "rappel";
+  ticket.updatedAt = Date.now();
+  saveSktData(data, true);
+  renderSktPanel();
+  setSktStatus("Rappel défini ✅");
+}
+
+function playSktReminderSound() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 660;
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.4);
+    setTimeout(() => ctx.close().catch(()=>{}), 700);
+  } catch {}
+}
+
+function showSktReminderPopup(ticket) {
+  if (!ticket || sktReminderPopupOpen || document.getElementById("sktReminderPopup")) return;
+  sktReminderPopupOpen = true;
+  sktReminderPopupTicketId = ticket.id;
+  playSktReminderSound();
+
+  const popup = document.createElement("div");
+  popup.id = "sktReminderPopup";
+  popup.className = "skt-reminder-modal";
+  popup.innerHTML = `
+    <h3>Rappel Helpline</h3>
+    <div class="muted" style="margin-bottom:12px;">Rappel Helpline : rappeler ${getSktTicketLabel(ticket)}</div>
+    <div class="skt-reminder-actions">
+      <button type="button" data-skt-reminder-action="done" class="primary">Rappel fait</button>
+      <button type="button" data-skt-reminder-action="postpone1">Reporter 1h</button>
+      <button type="button" data-skt-reminder-action="postpone2">Reporter 2h</button>
+      <button type="button" data-skt-reminder-action="cancel">Annuler</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+}
+
+function closeSktReminderPopup() {
+  const popup = document.getElementById("sktReminderPopup");
+  if (popup) popup.remove();
+  sktReminderPopupOpen = false;
+  sktReminderPopupTicketId = "";
+}
+
+function refreshSktReminderStates() {
+  const data = loadSktData();
+  const reminders = data.tickets.filter(t => t.status === "rappel" && Number.isFinite(t.rappelAt));
+
+  reminders.forEach(ticket => {
+    const stateClass = getSktReminderClass(ticket);
+    document.querySelectorAll(`[data-skt-ticket-open="${CSS.escape(ticket.id)}"]`).forEach(chip => {
+      chip.classList.remove("soon", "due");
+      if (stateClass) chip.classList.add(stateClass);
+      chip.textContent = `${getSktTicketLabel(ticket)} - ${formatDateTimeLocal(ticket.rappelAt)}`;
+    });
+
+    const opt = document.querySelector(`#sktTicketSelect option[value="${CSS.escape(ticket.id)}"]`);
+    if (opt) {
+      opt.className = stateClass;
+      opt.textContent = `${getSktTicketLabel(ticket)} - rappel - ${formatDateTimeLocal(ticket.rappelAt)}`;
+    }
+  });
+
+  renderSktReminderInfo(data);
+
+  const due = data.tickets
+    .filter(t => t.status === "rappel" && Number.isFinite(t.rappelAt) && Date.now() >= t.rappelAt)
+    .sort((a,b) => a.rappelAt - b.rappelAt)[0];
+  if (due) showSktReminderPopup(due);
+}
+
+function checkSktReminderDue() {
+  refreshSktReminderStates();
+}
+
 
 /***********************
  * Firebase (login + sync)
@@ -808,6 +1587,7 @@ let TECH_ID = "";
 let cloudSaveTimer = null;
 let cloudBusy = false;
 let cloudLoadedOnce = false;
+let localUiStarted = false;
 
 // Wait for Firebase SDK (module) to be ready
 function waitFirebaseReady() {
@@ -2787,6 +3567,7 @@ function buildExportBundle() {
     index: idx,                 // contient la liste {id,name}
     activeReportId: getActiveReportId(),
     reports,                     // contenu complet de chaque rapport
+    skt: loadSktData(),
     exportedAt: Date.now()
   };
 }
@@ -2815,9 +3596,17 @@ function applyImportBundle(bundle) {
     const exists = bundle.index.reports.some(r => r.id === wanted);
     setActiveReportId(exists ? wanted : (bundle.index.reports[0]?.id || ""));
 
-    // 4) Recharge l'UI
+    // 4) Restaure les données SKT si présentes, sinon garde/crée une structure locale vide
+    if (Object.prototype.hasOwnProperty.call(bundle, "skt")) {
+      saveSktData(bundle.skt, false);
+    } else {
+      ensureSktStorage();
+    }
+
+    // 5) Recharge l'UI
     loadActiveReportIntoUI();
     refreshReportSelect();
+    renderSktPanel();
     return true;
   } catch (e) {
     console.log("applyImportBundle error", e);
@@ -3025,6 +3814,213 @@ darkBtn.addEventListener("click", () => {
 });
 
 /***********************
+ * SKT events
+ ***********************/
+document.getElementById("sktModeToggle").addEventListener("click", () => {
+  saveSktFieldsFromUI(false);
+  const next = !loadSktData().mode;
+  applySktMode(next);
+  saveSktData(loadSktData(), true);
+});
+
+document.getElementById("sktNewTicketBtn").addEventListener("click", createSktTicket);
+document.getElementById("sktDoneTicketBtn").addEventListener("click", finishSktTicket);
+document.getElementById("sktDeleteTicketBtn").addEventListener("click", deleteSktTicket);
+
+document.getElementById("sktTicketSelect").addEventListener("change", (e) => {
+  stopSktSpeechRecognition();
+  saveSktFieldsFromUI(false);
+  const data = loadSktData();
+  if (data.tickets.some(t => t.id === e.target.value)) {
+    data.activeTicketId = e.target.value;
+    saveSktData(data, true);
+    renderSktPanel();
+  }
+});
+
+document.getElementById("sktReminderTickets").addEventListener("click", (e) => {
+  const btn = e.target && e.target.closest("button[data-skt-ticket-open]");
+  if (!btn) return;
+  stopSktSpeechRecognition();
+  saveSktFieldsFromUI(false);
+  const data = loadSktData();
+  if (data.tickets.some(t => t.id === btn.dataset.sktTicketOpen)) {
+    data.activeTicketId = btn.dataset.sktTicketOpen;
+    saveSktData(data, true);
+    renderSktPanel();
+  }
+});
+
+["sktClientSite", "sktPersonName", "sktPhone", "sktRequestType", "sktNotes", "sktFinalText"].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (id === "sktFinalText") el.addEventListener("keydown", protectSktPrefixKeydown);
+  el.addEventListener("input", () => saveSktFieldsFromUI(true));
+  el.addEventListener("change", () => saveSktFieldsFromUI(true));
+});
+
+document.getElementById("sktNoAnswerBtn").addEventListener("click", () => {
+  toggleSktTemplate("noanswer", true);
+  setSktStatus("Texte généré ✅");
+});
+
+document.getElementById("sktTemplates").addEventListener("click", (e) => {
+  const btn = e.target && e.target.closest("button[data-skt-template]");
+  if (!btn) return;
+  const tpl = SKT_TEMPLATES.find(([key]) => key === btn.dataset.sktTemplate);
+  if (!tpl) return;
+
+  toggleSktTemplate(tpl[0]);
+  setSktStatus("Modèles mis à jour ✅");
+});
+
+document.getElementById("sktResultOptions").addEventListener("click", (e) => {
+  const btn = e.target && e.target.closest("button[data-skt-result]");
+  if (!btn) return;
+
+  const data = saveSktFieldsFromUI(false);
+  const ticket = getActiveSktTicket(data);
+  if (!ticket) return;
+
+  ticket.result = btn.dataset.sktResult;
+  ticket.finalText = ticket.templateKeys && ticket.templateKeys.length
+    ? buildSktTextFromTicket(ticket)
+    : withSktResultText(ticket.finalText, ticket.result);
+  ticket.updatedAt = Date.now();
+  saveSktData(data, true);
+  renderSktPanel();
+  setSktStatus("Résultat ajouté au rapport ✅");
+});
+
+document.getElementById("sktCopyBtn").addEventListener("click", async () => {
+  const data = saveSktFieldsFromUI(true);
+  const text = getActiveSktTicket(data)?.finalText || SKT_PREFIX;
+  const finalEl = document.getElementById("sktFinalText");
+  if (finalEl) finalEl.value = text;
+  try {
+    await navigator.clipboard.writeText(text);
+    setSktStatus("Copié ✅");
+  } catch {
+    const el = document.getElementById("sktFinalText");
+    el.focus();
+    el.select();
+    setSktStatus("Sélectionné (Ctrl+C) ⚠️");
+  }
+});
+
+document.getElementById("sktReminderDelay").addEventListener("change", (e) => {
+  const custom = document.getElementById("sktReminderCustom");
+  if (custom) custom.style.display = e.target.value === "custom" ? "" : "none";
+});
+
+document.getElementById("sktReminderSetBtn").addEventListener("click", () => {
+  setSktReminder(document.getElementById("sktReminderDelay").value);
+});
+
+document.getElementById("sktDictationBtn").addEventListener("click", () => {
+  const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btn = document.getElementById("sktDictationBtn");
+  if (!Speech) {
+    setSktStatus("Dictée vocale non disponible sur ce navigateur.");
+    return;
+  }
+
+  if (sktRecognition && sktDictating) {
+    try { sktRecognition.stop(); } catch {}
+    return;
+  }
+
+  sktRecognition = new Speech();
+  sktRecognition.lang = "fr-FR";
+  sktRecognition.interimResults = false;
+  sktRecognition.continuous = true;
+
+  sktRecognition.onstart = () => {
+    sktDictating = true;
+    sktDictationTicketId = loadSktData().activeTicketId || "";
+    if (btn) btn.textContent = "Arrêter dictée";
+    setSktStatus("Dictée vocale en cours...");
+  };
+
+  sktRecognition.onresult = (event) => {
+    const finalEl = document.getElementById("sktFinalText");
+    if (!finalEl) return;
+    const currentTicketId = loadSktData().activeTicketId || "";
+    if (!sktDictationTicketId || currentTicketId !== sktDictationTicketId || document.hidden) {
+      stopSktSpeechRecognition();
+      return;
+    }
+    const spoken = Array.from(event.results)
+      .slice(event.resultIndex)
+      .map(r => r[0]?.transcript || "")
+      .join(" ")
+      .trim();
+    if (!spoken) return;
+
+    const start = Number.isFinite(finalEl.selectionStart) ? finalEl.selectionStart : finalEl.value.length;
+    const end = Number.isFinite(finalEl.selectionEnd) ? finalEl.selectionEnd : start;
+    const before = finalEl.value.slice(0, start);
+    const after = finalEl.value.slice(end);
+    const spacerBefore = before && !before.endsWith("\n") && !before.endsWith(" ") ? " " : "";
+    const spacerAfter = after && !after.startsWith("\n") && !after.startsWith(" ") ? " " : "";
+    finalEl.value = normalizeSktFinalText(`${before}${spacerBefore}${spoken}${spacerAfter}${after}`);
+    const pos = Math.min(finalEl.value.length, start + spacerBefore.length + spoken.length);
+    try { finalEl.setSelectionRange(pos, pos); } catch {}
+    saveSktFieldsFromUI(true);
+  };
+
+  sktRecognition.onerror = () => setSktStatus("Dictée vocale interrompue.");
+  sktRecognition.onend = () => {
+    sktDictating = false;
+    sktRecognition = null;
+    sktDictationTicketId = "";
+    if (btn) btn.textContent = "🎙 Dictée vocale";
+  };
+
+  try { sktRecognition.start(); }
+  catch { setSktStatus("Dictée vocale non disponible sur ce navigateur."); }
+});
+
+document.addEventListener("click", (e) => {
+  const action = e.target && e.target.dataset ? e.target.dataset.sktReminderAction : "";
+  if (!action) return;
+
+  const data = loadSktData();
+  const ticket = data.tickets.find(t => t.id === sktReminderPopupTicketId);
+  if (!ticket) {
+    closeSktReminderPopup();
+    return;
+  }
+
+  if (action === "postpone1" || action === "postpone2") {
+    const hours = action === "postpone1" ? 1 : 2;
+    ticket.rappelAt = Date.now() + hours * 60 * 60 * 1000;
+    ticket.status = "rappel";
+    ticket.updatedAt = Date.now();
+    saveSktData(data, true);
+    renderSktPanel();
+    setSktStatus(`Rappel reporté de ${hours}h`);
+  } else {
+    ticket.rappelAt = null;
+    ticket.status = "actif";
+    ticket.updatedAt = Date.now();
+    saveSktData(data, true);
+    renderSktPanel();
+    setSktStatus(action === "done" ? "Rappel fait ✅" : "Rappel annulé");
+  }
+
+  closeSktReminderPopup();
+});
+
+setInterval(refreshSktReminderStates, 30000);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) stopSktSpeechRecognition();
+  if (!document.hidden) refreshSktReminderStates();
+});
+window.addEventListener("pagehide", stopSktSpeechRecognition);
+window.addEventListener("beforeunload", stopSktSpeechRecognition);
+
+/***********************
  * INIT
  ***********************/
 renderAppTitle();
@@ -3043,6 +4039,7 @@ renderAppTitle();
 
 function initLocalUI() {
   ensureAtLeastOneReport();
+  ensureSktStorage();
   if (!getActiveReportId()) {
     const idx = loadIndex();
     setActiveReportId(idx.reports[0].id);
@@ -3058,6 +4055,13 @@ function initLocalUI() {
     }
     loadActiveReportIntoUI();
   })();
+  renderSktPanel();
+}
+
+function bootLocalUIOnce() {
+  if (localUiStarted) return;
+  localUiStarted = true;
+  initLocalUI();
 }
 
 (async function initAuthAndCloud() {
@@ -3069,6 +4073,15 @@ function initLocalUI() {
   const errBox = document.getElementById("loginError");
 
   function showErr(msg){ errBox.textContent = msg || ""; }
+
+  const knownTech = normalizeTechId(localStorage.getItem("tech_id"));
+  if (knownTech) {
+    TECH_ID = knownTech;
+    loginScreen.style.display = "none";
+    appRoot.style.display = "block";
+    bootLocalUIOnce();
+    status("Données locales chargées ✅");
+  }
 
   await waitFirebaseReady();
 
@@ -3124,8 +4137,15 @@ function initLocalUI() {
 
   fns.onAuthStateChanged(auth, async (user) => {
     if (!user) {
+  if (TECH_ID) {
+    loginScreen.style.display = "none";
+    appRoot.style.display = "block";
+    bootLocalUIOnce();
+    status(navigator.onLine ? "Mode local chargé ✅" : "Hors ligne");
+    return;
+  }
+
   TECH_ID = "";
-  localStorage.removeItem("tech_id");
 
   // On affiche le login MAIS on ne bloque plus l'app
   loginScreen.style.display = "flex";
@@ -3143,7 +4163,7 @@ function initLocalUI() {
     appRoot.style.display = "block";
 
     // 1) charge d'abord le local pour affichage rapide
-    initLocalUI();
+    bootLocalUIOnce();
 
     // 2) charge le cloud ensuite, sans bloquer l'ouverture
     setTimeout(async () => {
@@ -3246,7 +4266,7 @@ window.addEventListener("load", () => {
 if ("serviceWorker" in navigator) {
 
   // ⚠️ Change ce numéro à chaque release (même que CACHE_NAME)
-  const SW_VERSION = "v15";
+  const SW_VERSION = "v19";
 
   navigator.serviceWorker
     .register("./service-worker.js?" + SW_VERSION)
@@ -3302,7 +4322,7 @@ if ("serviceWorker" in navigator) {
     }
 
     // beautify feedback/dark/logout buttons lightly
-    ['feedbackBtn','darkToggle','logoutBtn'].forEach(id=>{
+    ['feedbackBtn','sktModeToggle','darkToggle','logoutBtn'].forEach(id=>{
       const btn=document.getElementById(id);
       if(btn) btn.style.fontWeight='700';
     });
