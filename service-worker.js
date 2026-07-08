@@ -2,7 +2,7 @@
 // SERVICE WORKER — Rapport intervention
 // ===============================
 
-const CACHE_NAME = "rapport-intervention-v19"; // <-- change à chaque update
+const CACHE_NAME = "rapport-intervention-v20"; // <-- change à chaque update
 
 const STATIC_ASSETS = [
   "./",
